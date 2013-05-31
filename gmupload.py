@@ -2,6 +2,7 @@
 
 """
 An upload script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
+You may contact the author (thebigmunch) in #gmusicapi on irc.freenode.net.
 """
 
 import os
@@ -9,9 +10,8 @@ import sys
 from gmusicapi import Musicmanager
 
 
-## Do not edit below this line unless you know what you are doing ##
 input = sys.argv[1:] if len(sys.argv) > 1 else '.'
-formats = ('.mp3', '.flac', '.ogg', '.m4a', 'm4b', '.wma')
+formats = ('.mp3', '.flac', '.ogg', '.m4a', '.m4b', '.wma')
 
 def auth():
 	"""
@@ -19,37 +19,43 @@ def auth():
 	Returns the authenticated client if successful
 	"""
 
-	mm = Musicmanager(debug_logging=False)
+	MM = Musicmanager(debug_logging=False)
 
 	attempts = 0
 
 	# Attempt to login. Perform oauth only when necessary.
 	while attempts < 3:
-		if mm.login():
+		if MM.login():
 			break
-		mm.perform_oauth()
+		MM.perform_oauth()
 		attempts += 1
 
-	if not mm.is_authenticated():
+	if not MM.is_authenticated():
 		print "Sorry, login failed."
 		return
 
 	print "Successfully logged in.\n"
 
-	return mm
+	return MM
 
-def upload(mm, files):
+def do_upload(files):
 	"""
 	Uploads all supported files from files list.
 	Outputs the upload response with a counter.
 	"""
 
+	# Sort the list for sensible output before uploading.
+	files.sort()
+
 	filenum = 0
 	total = len(files)
+
+	print "Uploading %s songs to Google Music\n" % total
+
 	for file in files:
 		filenum += 1
 
-		uploaded, matched, not_uploaded = mm.upload(file, transcode_quality="320k", enable_matching=False)
+		uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=False)
 
 		if uploaded:
 			print "(%s/%s) " % (filenum, total), "Successfully uploaded ", file
@@ -62,16 +68,13 @@ def upload(mm, files):
 				response = not_uploaded[file]
 			print "(%s/%s) " % (filenum, total), "Failed to upload ", file, " | ", response
 
-	return mm
-
-def main():
+def get_file_list():
 	"""
-	Creates a list of supported files to upload from user inputs.
+	Creates a list of supported files from user input(s).
 	"""
-
-	mm = auth()
 
 	files = []
+
 	for i in input:
 		if os.path.isfile(i) and i.endswith(formats):
 			files.append(i)
@@ -79,12 +82,14 @@ def main():
 		if os.path.isdir(i):
 			files = files + [os.path.join(dirpath, filename) for dirpath, dirnames, filenames in os.walk(i) for filename in filenames if filename.endswith(formats)]
 
-	# Sort the list before sending to upload for sensible output.
-	files.sort()
-	upload(mm, files)
+	return files
 
-	mm.logout()
+def main():
+	do_upload(get_file_list())
+
+	MM.logout()
 	print "All done!"
 
 if __name__ == '__main__':
+	MM = auth()
 	main()
