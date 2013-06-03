@@ -11,17 +11,16 @@ import re
 import sys
 from gmusicapi import Musicmanager
 
-
 input = sys.argv[1:] if len(sys.argv) > 1 else '.'
 formats = ('.mp3', '.flac', '.ogg', '.m4a', '.m4b')
 
-def auth():
-	"""
-	Creates an instance of the Musicmanager client and attempts to authenticate it.
-	Returns the authenticated client if successful
-	"""
+MM = Musicmanager(debug_logging=False)
 
-	MM = Musicmanager(debug_logging=False)
+
+def do_auth():
+	"""
+	Authenticates the MM client.
+	"""
 
 	attempts = 0
 
@@ -38,11 +37,10 @@ def auth():
 
 	print "Successfully logged in.\n"
 
-	return MM
 
-def clean_item(item):
+def clean_tag(tag):
 	"""
-	Cleans up metadata items to improve matching accuracy.
+	Cleans up metadata tags to improve matching accuracy.
 	"""
 
 	non_word = re.compile('[^\w\s]')
@@ -53,22 +51,22 @@ def clean_item(item):
 	lead_zeros = re.compile('^0*')
 	track_dots = re.compile('^\d+\.+')
 
-	item = unicode(item) # Convert tag to unicode.
-	item = item.lower() # Convert to lower case.
-	item = non_word.sub('', item) # Remove any non-words.
-	item = space.sub(' ', item) # Reduce multiple spaces to a single space.
-	item = lead_space.sub('', item) # Remove leading space.
-	item = trail_space.sub('', item) # Remove trailing space.
-	item = the.sub('', item) # Remove leading "the".
-	item = lead_zeros.sub('', item) # Remove leading zero(s) from track number
-	item = track_dots.sub('', item) # Remove dots from track number
+	tag = unicode(tag)  # Convert tag to unicode.
+	tag = tag.lower()  # Convert to lower case.
+	tag = non_word.sub('', tag)  # Remove any non-words.
+	tag = space.sub(' ', tag)  # Reduce multiple spaces to a single space.
+	tag = lead_space.sub('', tag)  # Remove leading space.
+	tag = trail_space.sub('', tag)  # Remove trailing space.
+	tag = the.sub('', tag)  # Remove leading "the".
+	tag = lead_zeros.sub('', tag)  # Remove leading zero(s) from track number
+	tag = track_dots.sub('', tag)  # Remove dots from track number
 
-	return item
+	return tag
+
 
 def do_upload(files):
 	"""
-	Uploads all supported files from files list.
-	Outputs the upload response with a counter.
+	Uploads the files and outputs the upload response with a counter.
 	"""
 
 	# Sort the list for sensible output before uploading.
@@ -83,25 +81,26 @@ def do_upload(files):
 		filenum += 1
 
 		uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=False)
-
 		if uploaded:
-			print "(%s/%s) " % (filenum, total), "Successfully uploaded ", file
+			print "(%s/%s) Successfully uploaded  %s" % (filenum, total, file)
 		elif matched:
-			print "(%s/%s) " % (filenum, total), "Successfully scanned and matched ", file
+			print "(%s/%s) Successfully scanned and matched  %s" % (filenum, total, file)
 		else:
 			if "ALREADY_EXISTS" or "this song is already uploaded" in not_uploaded[file]:
 				response = "ALREADY EXISTS"
 			else:
 				response = not_uploaded[file]
-			print "(%s/%s) " % (filenum, total), "Failed to upload ", file, " | ", response
+			print "(%s/%s) Failed to upload  %s | %s" % (filenum, total, file, response)
+
 
 def filter_tags(song):
 	"""
-	Filters out a missing artist, album, title, or track tag to improve matching accuracy. 
+	Filters out a missing artist, album, title, or track tag to improve matching accuracy.
 	"""
 
 	# Need both tracknumber (mutagen) and track_number (Google Music) here.
 	return [song[tag] for tag in ['artist', 'album', 'title', 'tracknumber', 'track_number'] if song.get(tag)]
+
 
 def get_file_list():
 	"""
@@ -115,13 +114,18 @@ def get_file_list():
 			files.append(i)
 
 		if os.path.isdir(i):
-			files = files + [os.path.join(dirpath, filename) for dirpath, dirnames, filenames in os.walk(i) for filename in filenames if filename.endswith(formats)]
+			for dirpath, dirnames, filenames in os.walk(i):
+				for filename in filenames:
+					if filename.endswith(formats):
+						file = os.path.join(dirpath, filename)
+						files.append(file)
 
 	return files
 
+
 def get_google_songs():
 	"""
-	Load song list from Google Music library
+	Load song list from Google Music library.
 	"""
 
 	print "Loading Google Music songs..."
@@ -129,11 +133,11 @@ def get_google_songs():
 	google_songs = {}
 
 	for song in MM.get_all_songs():
-		items = []
+		tags = []
 
-		for item in filter_tags(song):
-			items.append(clean_item(item))
-			key = '|'.join(items)
+		for tag in filter_tags(song):
+			tags.append(clean_tag(tag))
+			key = '|'.join(tags)
 
 		google_songs[key] = song
 
@@ -141,9 +145,10 @@ def get_google_songs():
 
 	return google_songs
 
+
 def get_local_songs():
 	"""
-	Load song list from local system
+	Load song list from local system.
 	"""
 
 	print "Loading local songs..."
@@ -151,13 +156,13 @@ def get_local_songs():
 	local_songs = {}
 
 	for file in get_file_list():
-		items = []
-
 		song = mutagen.File(file, easy=True)
 
-		for item in filter_tags(song):
-			items.append(clean_item(item[0]))
-			key = '|'.join(items)
+		tags = []
+
+		for tag in filter_tags(song):
+			tags.append(clean_tag(tag[0]))
+			key = '|'.join(tags)
 
 		local_songs[key] = file
 
@@ -165,14 +170,16 @@ def get_local_songs():
 
 	return local_songs
 
-def main():
-	files = []
 
-	# Create list of local and Google Music library songs for comparison.
+def main():
+	do_auth()
+
 	local_songs = get_local_songs()
 	google_songs = get_google_songs()
 
 	print "Scanning for missing songs to upload..."
+
+	files = []
 
 	# Compare local and Google Music library lists.
 	for key, song in local_songs.iteritems():
@@ -189,6 +196,6 @@ def main():
 	MM.logout()
 	print "All done!"
 
+
 if __name__ == '__main__':
-	MM = auth()
 	main()
