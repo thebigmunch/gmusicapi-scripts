@@ -9,17 +9,16 @@ import os
 import sys
 from gmusicapi import Musicmanager
 
-
 input = sys.argv[1:] if len(sys.argv) > 1 else '.'
 formats = ('.mp3', '.flac', '.ogg', '.m4a', '.m4b', '.wma')
 
-def auth():
-	"""
-	Creates an instance of the Musicmanager client and attempts to authenticate it.
-	Returns the authenticated client if successful
-	"""
+MM = Musicmanager(debug_logging=False)
 
-	MM = Musicmanager(debug_logging=False)
+
+def do_auth():
+	"""
+	Authenticates the MM client.
+	"""
 
 	attempts = 0
 
@@ -36,12 +35,10 @@ def auth():
 
 	print "Successfully logged in.\n"
 
-	return MM
 
 def do_upload(files):
 	"""
-	Uploads all supported files from files list.
-	Outputs the upload response with a counter.
+	Uploads the files and outputs the upload response with a counter.
 	"""
 
 	# Sort the list for sensible output before uploading.
@@ -58,15 +55,16 @@ def do_upload(files):
 		uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=False)
 
 		if uploaded:
-			print "(%s/%s) " % (filenum, total), "Successfully uploaded ", file
+			print "(%s/%s) Successfully uploaded  %s" % (filenum, total, file)
 		elif matched:
-			print "(%s/%s) " % (filenum, total), "Successfully scanned and matched ", file
+			print "(%s/%s) Successfully scanned and matched  %s" % (filenum, total, file)
 		else:
 			if "ALREADY_EXISTS" or "this song is already uploaded" in not_uploaded[file]:
 				response = "ALREADY EXISTS"
 			else:
 				response = not_uploaded[file]
-			print "(%s/%s) " % (filenum, total), "Failed to upload ", file, " | ", response
+			print "(%s/%s) Failed to upload  %s | %s" % (filenum, total, file, response)
+
 
 def get_file_list():
 	"""
@@ -80,16 +78,26 @@ def get_file_list():
 			files.append(i)
 
 		if os.path.isdir(i):
-			files = files + [os.path.join(dirpath, filename) for dirpath, dirnames, filenames in os.walk(i) for filename in filenames if filename.endswith(formats)]
+			for dirpath, dirnames, filenames in os.walk(i):
+				for filename in filenames:
+					if filename.endswith(formats):
+						file = os.path.join(dirpath, filename)
+						files.append(file)
 
 	return files
 
-def main():
-	do_upload(get_file_list())
 
+def main():
+	do_auth()
+
+	files = get_file_list()
+
+	do_upload(files)
+
+	# Log out MM session when finished.
 	MM.logout()
 	print "All done!"
 
+
 if __name__ == '__main__':
-	MM = auth()
 	main()
