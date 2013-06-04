@@ -44,7 +44,7 @@ def clean_tag(tag):
 	"""
 
 	track_slash = re.compile('\/\s*\d+')
-	lead_zeros = re.compile('^0+')
+	lead_zeros = re.compile('^0+([0-9]+)')
 	track_dots = re.compile('^\d+\.+')
 	non_word = re.compile('[^\w\s]')
 	space = re.compile('\s+')
@@ -55,7 +55,7 @@ def clean_tag(tag):
 	tag = unicode(tag)  # Convert tag to unicode.
 	tag = tag.lower()  # Convert to lower case.
 	tag = track_slash.sub('', tag)  # Remove "/<totaltracks>" from track number.
-	tag = lead_zeros.sub('', tag)  # Remove leading zero(s) from track number.
+	tag = lead_zeros.sub(r'\1', tag)  # Remove leading zero(s) from track number.
 	tag = track_dots.sub('', tag)  # Remove dots from track number.
 	tag = non_word.sub('', tag)  # Remove any non-words.
 	tag = space.sub(' ', tag)  # Reduce multiple spaces to a single space.
@@ -111,6 +111,14 @@ def filter_tags(song):
 	"""
 	Filters out a missing artist, album, title, or track tag to improve matching accuracy.
 	"""
+
+	# Replace track numbers with 0 if no tag exists.
+	if song.get('id'):
+		if not song.get('track_number'):
+			song['track_number'] = '0'
+	else:
+		if not song.get('tracknumber'):
+			song['tracknumber'] = '0'
 
 	# Need both tracknumber (mutagen) and track_number (Google Music) here.
 	return [song[tag] for tag in ['artist', 'album', 'title', 'tracknumber', 'track_number'] if song.get(tag)]
