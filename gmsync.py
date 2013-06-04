@@ -43,23 +43,25 @@ def clean_tag(tag):
 	Cleans up metadata tags to improve matching accuracy.
 	"""
 
+	track_slash = re.compile('\/\s*\d+')
+	lead_zeros = re.compile('^0+')
+	track_dots = re.compile('^\d+\.+')
 	non_word = re.compile('[^\w\s]')
 	space = re.compile('\s+')
 	lead_space = re.compile('^\s+')
 	trail_space = re.compile('\s+$')
 	the = re.compile('^the\s+', re.I)
-	lead_zeros = re.compile('^0*')
-	track_dots = re.compile('^\d+\.+')
 
 	tag = unicode(tag)  # Convert tag to unicode.
 	tag = tag.lower()  # Convert to lower case.
+	tag = track_slash.sub('', tag)  # Remove "/<totaltracks>" from track number.
+	tag = lead_zeros.sub('', tag)  # Remove leading zero(s) from track number.
+	tag = track_dots.sub('', tag)  # Remove dots from track number.
 	tag = non_word.sub('', tag)  # Remove any non-words.
 	tag = space.sub(' ', tag)  # Reduce multiple spaces to a single space.
 	tag = lead_space.sub('', tag)  # Remove leading space.
 	tag = trail_space.sub('', tag)  # Remove trailing space.
 	tag = the.sub('', tag)  # Remove leading "the".
-	tag = lead_zeros.sub('', tag)  # Remove leading zero(s) from track number
-	tag = track_dots.sub('', tag)  # Remove dots from track number
 
 	return tag
 
