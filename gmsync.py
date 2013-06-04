@@ -9,7 +9,7 @@ import mutagen
 import os
 import re
 import sys
-from gmusicapi import Musicmanager
+from gmusicapi import Musicmanager, CallFailure
 
 input = sys.argv[1:] if len(sys.argv) > 1 else '.'
 formats = ('.mp3', '.flac', '.ogg', '.m4a', '.m4b')
@@ -74,23 +74,35 @@ def do_upload(files):
 
 	filenum = 0
 	total = len(files)
+	errors = {}
 
 	print "Uploading %s songs to Google Music\n" % total
 
 	for file in files:
 		filenum += 1
 
-		uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=False)
-		if uploaded:
-			print "(%s/%s) Successfully uploaded  %s" % (filenum, total, file)
-		elif matched:
-			print "(%s/%s) Successfully scanned and matched  %s" % (filenum, total, file)
+		try:
+			uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=False)
+		except CallFailure as e:
+			print "(%s/%s) Failed to upload  %s | %s" % (filenum, total, file, e)
+			errors[file] = e
 		else:
-			if "ALREADY_EXISTS" or "this song is already uploaded" in not_uploaded[file]:
-				response = "ALREADY EXISTS"
+			if uploaded:
+				print "(%s/%s) Successfully uploaded  %s" % (filenum, total, file)
+			elif matched:
+				print "(%s/%s) Successfully scanned and matched  %s" % (filenum, total, file)
 			else:
-				response = not_uploaded[file]
-			print "(%s/%s) Failed to upload  %s | %s" % (filenum, total, file, response)
+				if "ALREADY_EXISTS" or "this song is already uploaded" in not_uploaded[file]:
+					response = "ALREADY EXISTS"
+				else:
+					response = not_uploaded[file]
+				print "(%s/%s) Failed to upload  %s | %s" % (filenum, total, file, response)
+
+	if errors:
+		print "\n\nThe following errors occurred:\n"
+		for k, v in errors.iteritems():
+			print "%s | %s" % (k, v)
+		print "\nThese files may need to be synced again.\n"
 
 
 def filter_tags(song):
