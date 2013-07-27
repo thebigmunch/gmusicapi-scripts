@@ -5,13 +5,13 @@ An upload script for Google Music using https://github.com/simon-weber/Unofficia
 You may contact the author (thebigmunch) in #gmusicapi on irc.freenode.net.
 """
 
+import argparse
 import mutagen
 import os
 import re
 import sys
 from gmusicapi import Musicmanager, CallFailure
 
-input = sys.argv[1:] if len(sys.argv) > 1 else '.'
 formats = ('.mp3', '.flac', '.ogg', '.m4a', '.m4b')
 
 # Pre-compile regex for clean_tag function.
@@ -24,7 +24,14 @@ lead_space = re.compile('^\s+')
 trail_space = re.compile('\s+$')
 the = re.compile('^the\s+', re.I)
 
-MM = Musicmanager(debug_logging=False)
+# Parse command line for arguments.
+parser = argparse.ArgumentParser()
+parser.add_argument('-l', '--log', action='store_true', default=False, help='Enable gmusicapi logging')
+parser.add_argument('-m', '--match', action='store_true', default=False, help='Enable scan and match')
+parser.add_argument('input', nargs='*', default='.', help='Files, directories, or glob patterns to sync. Defaults to current directory if none given.')
+opts = parser.parse_args()
+
+MM = Musicmanager(debug_logging=opts.log)
 
 
 def do_auth():
@@ -86,7 +93,7 @@ def do_upload(files):
 		filenum += 1
 
 		try:
-			uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=False)
+			uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=opts.match)
 		except CallFailure as e:
 			print "(%s/%s) Failed to upload  %s | %s" % (filenum, total, file, e)
 			errors[file] = e
@@ -133,7 +140,7 @@ def get_file_list():
 
 	files = []
 
-	for i in input:
+	for i in opts.input:
 		if os.path.isfile(i) and i.endswith(formats):
 			files.append(i)
 
