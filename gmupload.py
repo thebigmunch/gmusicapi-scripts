@@ -16,6 +16,7 @@ formats = ('.mp3', '.flac', '.ogg', '.m4a', '.m4b', '.wma')
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--log', action='store_true', default=False, help='Enable gmusicapi logging')
 parser.add_argument('-m', '--match', action='store_true', default=False, help='Enable scan and match')
+parser.add_argument('-d', '--dry-run', action='store_true', default=False, help='Output list of songs that would be uploaded')
 parser.add_argument('input', nargs='*', default='.', help='Files, directories, or glob patterns to upload. Defaults to current directory if none given.')
 opts = parser.parse_args()
 
@@ -43,19 +44,13 @@ def do_auth():
 	print "Successfully logged in.\n"
 
 
-def do_upload(files):
+def do_upload(files, total):
 	"""
 	Uploads the files and outputs the upload response with a counter.
 	"""
 
-	# Sort the list for sensible output before uploading.
-	files.sort()
-
 	filenum = 0
-	total = len(files)
 	errors = {}
-
-	print "Uploading %s songs to Google Music\n" % total
 
 	for file in files:
 		filenum += 1
@@ -110,11 +105,25 @@ def main():
 
 	files = get_file_list()
 
-	do_upload(files)
+	# Upload songs to your Google Music library.
+	if files:
+		# Sort the list for sensible output.
+		files.sort()
+		total = len(files)
+
+		if opts.dry_run:
+			print "Found %s songs\n" % total
+			for f in files:
+				print "%s" % f
+		else:
+			print "Uploading %s songs to Google Music\n" % total
+			do_upload(files, total)
+	else:
+		print "No songs to upload"
 
 	# Log out MM session when finished.
 	MM.logout()
-	print "All done!"
+	print "\nAll done!"
 
 
 if __name__ == '__main__':
