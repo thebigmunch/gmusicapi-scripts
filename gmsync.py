@@ -25,14 +25,28 @@ trail_space = re.compile('\s+$')
 the = re.compile('^the\s+', re.I)
 
 # Parse command line for arguments.
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('-l', '--log', action='store_true', default=False, help='Enable gmusicapi logging')
 parser.add_argument('-m', '--match', action='store_true', default=False, help='Enable scan and match')
 parser.add_argument('-d', '--dry-run', action='store_true', default=False, help='Output list of songs that would be uploaded')
-parser.add_argument('input', nargs='*', default='.', help='Files, directories, or glob patterns to sync. Defaults to current directory if none given.')
+parser.add_argument('-q', '--quiet', action='store_true', default=False, help='Don\'t output status messages\n-l,--log will display gmusicapi warnings\n-d,--dry-run will display song list')
+parser.add_argument('input', nargs='*', default='.', help='Files, directories, or glob patterns to upload\nDefaults to current directory if none given')
 opts = parser.parse_args()
 
 MM = Musicmanager(debug_logging=opts.log)
+
+
+def do_output(msg, *args):
+	"""
+	Utility function for option-based output.
+	"""
+
+	if opts.quiet:
+		pass
+	elif args:
+		print msg % args
+	else:
+		print msg
 
 
 def do_auth():
@@ -50,10 +64,10 @@ def do_auth():
 		attempts += 1
 
 	if not MM.is_authenticated():
-		print "Sorry, login failed."
+		do_output("Sorry, login failed.")
 		return
 
-	print "Successfully logged in.\n"
+	do_output("Successfully logged in.\n")
 
 
 def clean_tag(tag):
@@ -90,25 +104,25 @@ def do_upload(files, total):
 		try:
 			uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=opts.match)
 		except CallFailure as e:
-			print "(%s/%s) Failed to upload  %s | %s" % (filenum, total, file, e)
+			do_output("(%s/%s) Failed to upload  %s | %s", filenum, total, file, e)
 			errors[file] = e
 		else:
 			if uploaded:
-				print "(%s/%s) Successfully uploaded  %s" % (filenum, total, file)
+				do_output("(%s/%s) Successfully uploaded  %s", filenum, total, file)
 			elif matched:
-				print "(%s/%s) Successfully scanned and matched  %s" % (filenum, total, file)
+				do_output("(%s/%s) Successfully scanned and matched  %s", filenum, total, file)
 			else:
 				if "ALREADY_EXISTS" or "this song is already uploaded" in not_uploaded[file]:
 					response = "ALREADY EXISTS"
 				else:
 					response = not_uploaded[file]
-				print "(%s/%s) Failed to upload  %s | %s" % (filenum, total, file, response)
+				do_output("(%s/%s) Failed to upload  %s | %s", filenum, total, file, response)
 
 	if errors:
-		print "\n\nThe following errors occurred:\n"
+		do_output("\n\nThe following errors occurred:\n")
 		for k, v in errors.iteritems():
-			print "%s | %s" % (k, v)
-		print "\nThese files may need to be synced again.\n"
+			do_output("%s | %s", k, v)
+		do_output("\nThese files may need to be synced again.\n")
 
 
 def filter_tags(song):
@@ -154,7 +168,7 @@ def get_google_songs():
 	Load song list from Google Music library.
 	"""
 
-	print "Loading Google Music songs..."
+	do_output("Loading Google Music songs...")
 
 	google_songs = {}
 
@@ -167,7 +181,7 @@ def get_google_songs():
 
 		google_songs[key] = song
 
-	print "Loaded %s Google Music songs\n" % len(google_songs)
+	do_output("Loaded %s Google Music songs\n", len(google_songs))
 
 	return google_songs
 
@@ -177,7 +191,7 @@ def get_local_songs():
 	Load song list from local system.
 	"""
 
-	print "Loading local songs..."
+	do_output("Loading local songs...")
 
 	local_songs = {}
 
@@ -192,7 +206,7 @@ def get_local_songs():
 
 		local_songs[key] = file
 
-	print "Loaded %s local songs\n" % len(local_songs)
+	do_output("Loaded %s local songs\n", len(local_songs))
 
 	return local_songs
 
@@ -203,7 +217,7 @@ def main():
 	local_songs = get_local_songs()
 	google_songs = get_google_songs()
 
-	print "Scanning for missing songs..."
+	do_output("Scanning for missing songs...")
 
 	files = []
 
@@ -219,18 +233,18 @@ def main():
 		total = len(files)
 
 		if opts.dry_run:
-			print "Found %s songs\n" % total
+			do_output("Found %s songs\n", total)
 			for f in files:
 				print "%s" % f
 		else:
-			print "Uploading %s songs to Google Music\n" % total
+			do_output("Uploading %s songs to Google Music\n", total)
 			do_upload(files, total)
 	else:
-		print "No songs to upload"
+		do_output("No songs to upload")
 
 	# Log out MM session when finished.
 	MM.logout()
-	print "\nAll done!"
+	do_output("\nAll done!")
 
 
 if __name__ == '__main__':
