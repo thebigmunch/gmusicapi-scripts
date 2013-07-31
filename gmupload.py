@@ -2,7 +2,7 @@
 
 """
 An upload script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
-You may contact the author (thebigmunch) in #gmusicapi on irc.freenode.net.
+You may contact the author (thebigmunch) in #gmusicapi on irc.freenode.net or by e-mail at munchicus+gmusicapi@gmail.com.
 """
 
 import argparse
