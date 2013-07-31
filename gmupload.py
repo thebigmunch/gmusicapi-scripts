@@ -10,7 +10,7 @@ import os
 import sys
 from gmusicapi import Musicmanager, CallFailure
 
-formats = ('.mp3', '.flac', '.ogg', '.m4a', '.m4b', '.wma')
+formats = ('.mp3', '.flac', '.ogg', '.m4a')
 
 # Parse command line for arguments.
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)

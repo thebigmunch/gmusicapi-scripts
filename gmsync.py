@@ -12,7 +12,7 @@ import re
 import sys
 from gmusicapi import Musicmanager, CallFailure
 
-formats = ('.mp3', '.flac', '.ogg', '.m4a', '.m4b')
+formats = ('.mp3', '.flac', '.ogg', '.m4a')
 
 # Pre-compile regex for clean_tag function.
 track_slash = re.compile('\/\s*\d+')
