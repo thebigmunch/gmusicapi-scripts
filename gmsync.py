@@ -150,13 +150,13 @@ def get_file_list():
 	files = []
 
 	for i in opts.input:
-		if os.path.isfile(i) and i.endswith(formats):
+		if os.path.isfile(i) and i.lower().endswith(formats):
 			files.append(i)
 
 		if os.path.isdir(i):
 			for dirpath, dirnames, filenames in os.walk(i):
 				for filename in filenames:
-					if filename.endswith(formats):
+					if filename.lower().endswith(formats):
 						file = os.path.join(dirpath, filename)
 						files.append(file)
 
