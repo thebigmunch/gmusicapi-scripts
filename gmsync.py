@@ -10,7 +10,8 @@ import mutagen
 import os
 import re
 import sys
-from gmusicapi import Musicmanager, CallFailure
+from gmusicapi import CallFailure
+from gmusicapi.clients import Musicmanager, OAUTH_FILEPATH
 
 formats = ('.mp3', '.flac', '.ogg', '.m4a')
 
@@ -26,6 +27,7 @@ the = re.compile('^the\s+', re.I)
 
 # Parse command line for arguments.
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
+parser.add_argument('-c', '--cred', default='oauth', help='Specify oauth credential file name to use/create\n(Default "oauth" -> ' + OAUTH_FILEPATH)
 parser.add_argument('-l', '--log', action='store_true', default=False, help='Enable gmusicapi logging')
 parser.add_argument('-m', '--match', action='store_true', default=False, help='Enable scan and match')
 parser.add_argument('-d', '--dry-run', action='store_true', default=False, help='Output list of songs that would be uploaded')
@@ -56,11 +58,13 @@ def do_auth():
 
 	attempts = 0
 
+	oauth_file = os.path.join(os.path.dirname(OAUTH_FILEPATH), opts.cred + '.cred')
+
 	# Attempt to login. Perform oauth only when necessary.
 	while attempts < 3:
-		if MM.login():
+		if MM.login(oauth_credentials=oauth_file):
 			break
-		MM.perform_oauth()
+		MM.perform_oauth(storage_filepath=oauth_file)
 		attempts += 1
 
 	if not MM.is_authenticated():
