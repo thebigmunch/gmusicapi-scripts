@@ -27,7 +27,7 @@ the = re.compile('^the\s+', re.I)
 
 # Parse command line for arguments.
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-parser.add_argument('-c', '--cred', default='oauth', help='Specify oauth credential file name to use/create\n(Default "oauth" -> ' + OAUTH_FILEPATH)
+parser.add_argument('-c', '--cred', default='oauth', help='Specify oauth credential file name to use/create\n(Default: "oauth" -> ' + OAUTH_FILEPATH + ')')
 parser.add_argument('-l', '--log', action='store_true', default=False, help='Enable gmusicapi logging')
 parser.add_argument('-m', '--match', action='store_true', default=False, help='Enable scan and match')
 parser.add_argument('-d', '--dry-run', action='store_true', default=False, help='Output list of songs that would be uploaded')
