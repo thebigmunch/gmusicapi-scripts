@@ -16,6 +16,7 @@ Input can be any number/combination of directories, files, and glob patterns sep
 Args         |Description
 -------------|-----------
 -h, --help   |  show this help message and exit
+-c, --cred   |  Specify oauth credential file name to use/create<br>(Default: "oauth")
 -l, --log    |  Enable gmusicapi logging
 -m, --match  |  Enable scan and match
 -d, --dry-run|  Output list of songs that would be uploaded
@@ -33,6 +34,7 @@ Input can be any number/combination of directories, files, and glob patterns sep
 Args         |Description
 -------------|-----------
 -h, --help   |  show this help message and exit
+-c, --cred   |  Specify oauth credential file name to use/create<br>(Default: "oauth")
 -l, --log    |  Enable gmusicapi logging
 -m, --match  |  Enable scan and match
 -d, --dry-run|  Output list of songs that would be uploaded
