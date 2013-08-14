@@ -84,7 +84,8 @@ def do_upload(files, total):
 			elif matched:
 				do_output("(%s/%s) Successfully scanned and matched  %s", filenum, total, file)
 			else:
-				if "ALREADY_EXISTS" or "this song is already uploaded" in not_uploaded[file]:
+				check_strings = ["ALREADY_EXISTS", "this song is already uploaded"]
+				if any(cs in not_uploaded[file] for cs in check_strings):
 					response = "ALREADY EXISTS"
 				else:
 					response = not_uploaded[file]
