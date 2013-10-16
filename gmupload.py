@@ -5,6 +5,7 @@ An upload script for Google Music using https://github.com/simon-weber/Unofficia
 You may contact the author (thebigmunch) in #gmusicapi on irc.freenode.net or by e-mail at munchicus+gmusicapi@gmail.com.
 """
 
+from  __future__ import print_function, unicode_literals
 import argparse
 import os
 import sys
@@ -25,18 +26,7 @@ opts = parser.parse_args()
 
 MM = Musicmanager(debug_logging=opts.log)
 
-
-def do_output(msg, *args):
-	"""
-	Utility function for option-based output.
-	"""
-
-	if opts.quiet:
-		pass
-	elif args:
-		print msg % args
-	else:
-		print msg
+_print = print if not opts.quiet else lambda *a, **k: None
 
 
 def do_auth():
@@ -56,10 +46,10 @@ def do_auth():
 		attempts += 1
 
 	if not MM.is_authenticated():
-		do_output("Sorry, login failed.")
+		_print("Sorry, login failed.")
 		return
 
-	do_output("Successfully logged in.\n")
+	_print("Successfully logged in.\n")
 
 
 def do_upload(files, total):
@@ -69,6 +59,7 @@ def do_upload(files, total):
 
 	filenum = 0
 	errors = {}
+	pad = len(str(total))
 
 	for file in files:
 		filenum += 1
@@ -76,26 +67,26 @@ def do_upload(files, total):
 		try:
 			uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=opts.match)
 		except CallFailure as e:
-			do_output("(%s/%s) Failed to upload  %s | %s", filenum, total, file, e)
+			_print("({num:>{pad}}/{total}) Failed to upload  {file} | {error}".format(num=filenum, total=total, file=file, error=e, pad=pad).encode('utf8'))
 			errors[file] = e
 		else:
 			if uploaded:
-				do_output("(%s/%s) Successfully uploaded  %s", filenum, total, file)
+				_print("({num:>{pad}}/{total}) Successfully uploaded  {file}".format(num=filenum, total=total, file=file, pad=pad).encode('utf8'))
 			elif matched:
-				do_output("(%s/%s) Successfully scanned and matched  %s", filenum, total, file)
+				_print("({num:>{pad}}/{total}) Successfully scanned and matched  {file}".format(num=filenum, total=total, file=file, pad=pad).encode('utf8'))
 			else:
 				check_strings = ["ALREADY_EXISTS", "this song is already uploaded"]
-				if any(cs in not_uploaded[file] for cs in check_strings):
+				if any(check_string in not_uploaded[file] for check_string in check_strings):
 					response = "ALREADY EXISTS"
 				else:
 					response = not_uploaded[file]
-				do_output("(%s/%s) Failed to upload  %s | %s", filenum, total, file, response)
+				_print("({num:>{pad}}/{total}) Failed to upload  {file} | {response}".format(num=filenum, total=total, file=file, response=response, pad=pad).encode('utf8'))
 
 	if errors:
-		do_output("\n\nThe following errors occurred:\n")
-		for k, v in errors.iteritems():
-			do_output("%s | %s", k, v)
-		do_output("\nThese files may need to be synced again.\n")
+		_print("\n\nThe following errors occurred:\n")
+		for file, e in errors.iteritems():
+			_print("{file} | {error}".format(file=file, error=e).encode('utf8'))
+		_print("\nThese files may need to be synced again.\n")
 
 
 def get_file_list():
@@ -131,18 +122,18 @@ def main():
 		total = len(files)
 
 		if opts.dry_run:
-			do_output("Found %s songs\n", total)
-			for f in files:
-				print "%s" % f
+			_print("Found {0} songs\n".format(total))
+			for file in files:
+				print(file)
 		else:
-			do_output("Uploading %s songs to Google Music\n", total)
+			_print("Uploading {0} songs to Google Music\n".format(total))
 			do_upload(files, total)
 	else:
-		do_output("No songs to upload")
+		_print("No songs to upload")
 
 	# Log out MM session when finished.
 	MM.logout()
-	do_output("\nAll done!")
+	_print("\nAll done!")
 
 
 if __name__ == '__main__':
