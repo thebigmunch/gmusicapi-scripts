@@ -168,7 +168,12 @@ def get_google_songs():
 
 	google_songs = {}
 
-	for song in MM.get_all_songs():
+	try:
+		songs = MM.get_all_songs()
+	except:
+		songs = MM.get_uploaded_songs()
+
+	for song in songs:
 		tags = []
 
 		for tag in filter_tags(song):
