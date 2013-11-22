@@ -97,6 +97,8 @@ def get_file_list():
 	files = []
 
 	for i in opts.input:
+		i = i.decode('utf8')
+
 		if os.path.isfile(i) and i.lower().endswith(formats):
 			files.append(i)
 
