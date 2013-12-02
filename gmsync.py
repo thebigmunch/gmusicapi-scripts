@@ -5,12 +5,11 @@ An upload script for Google Music using https://github.com/simon-weber/Unofficia
 You may contact the author (thebigmunch) in #gmusicapi on irc.freenode.net or by e-mail at munchicus+gmusicapi@gmail.com.
 """
 
-from  __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals
 import argparse
 import mutagen
 import os
 import re
-import sys
 from gmusicapi import CallFailure
 from gmusicapi.clients import Musicmanager, OAUTH_FILEPATH
 
