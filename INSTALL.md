@@ -11,5 +11,5 @@ Installation
 
 		git clone https://github.com/thebigmunch/gmusicapi-scripts
 
-5) You're now ready to use the scripts. See the [USAGE.md](USAGE.md) file or the online [Wiki](https://github.com/thebigmunch/gmusicapi-scripts/wiki)
+5) You're now ready to use the scripts. See the [USAGE.md](USAGE.md) file or the online [Wiki](https://github.com/thebigmunch/gmusicapi-scripts/wiki) for usage instructions.
 		
