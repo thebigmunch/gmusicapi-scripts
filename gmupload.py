@@ -64,6 +64,7 @@ def do_upload(files, total):
 		filenum += 1
 
 		try:
+			_print("Uploading  {0}".format(file), end="\r")
 			uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=opts.match)
 		except CallFailure as e:
 			_print("({num:>{pad}}/{total}) Failed to upload  {file} | {error}".format(num=filenum, total=total, file=file, error=e, pad=pad).encode('utf8'))
