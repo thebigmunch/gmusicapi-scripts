@@ -254,29 +254,30 @@ def main():
 		if key not in google_songs:
 			upload_files.append(song)
 
-	# Upload any local songs not in your Google Music library.
-	if upload_files:
-		# Sort the list for sensible output.
-		upload_files.sort()
-		total = len(upload_files)
+	# Sort lists for sensible output.
+	upload_files.sort()
+	exclude_files.sort()
 
-		if opts.dry_run:
-			_print("Found {0} songs\n".format(total))
-			if exclude_files:
-				_print("Songs to exclude:\n")
-				for file in exclude_files:
-					print(file.encode('utf8'))
+	total = len(upload_files)
 
-				print()
+	if opts.dry_run:
+		_print("Found {0} songs".format(total))
 
-			_print("Songs to upload:\n")
+		if upload_files:
+			_print("\nSongs to upload:\n")
 			for file in upload_files:
 				print(file.encode('utf8'))
-		else:
+
+		if exclude_files:
+			_print("\nSongs to exclude:\n")
+			for file in exclude_files:
+				print(file.encode('utf8'))
+	else:
+		if upload_files:
 			_print("Uploading {0} songs to Google Music\n".format(total))
 			do_upload(upload_files, total)
-	else:
-		_print("No songs to upload")
+		else:
+			_print("No songs to upload")
 
 	# Log out MM session when finished.
 	MM.logout()
