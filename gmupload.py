@@ -115,7 +115,8 @@ def get_file_list():
 def main():
 	do_auth()
 
-	files = get_file_list()
+	_print("Loading local songs...")
+	files, exclude_files = get_file_list()
 
 	# Upload songs to your Google Music library.
 	if files:
