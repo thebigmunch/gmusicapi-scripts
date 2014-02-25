@@ -19,7 +19,8 @@ Args         |Description
 -c, --cred   |  Specify oauth credential file name to use/create<br>(Default: "oauth")
 -l, --log    |  Enable gmusicapi logging
 -m, --match  |  Enable scan and match
--d, --dry-run|  Output list of songs that would be uploaded
+-e, -exclude |  Exclude file paths matching a Python regex pattern<br>This option can be set multiple times
+-d, --dry-run|  Output list of songs that would be uploaded and excluded
 -q, --quiet  |  Don't output status messages<br>-l,--log will display gmusicapi warnings<br>-d,--dry-run will display song list
 
 **Example:** ``gmsync.py -m /path/to/music /other/path/to/music.mp3 /another/path/to/*.flac``
@@ -37,7 +38,8 @@ Args         |Description
 -c, --cred   |  Specify oauth credential file name to use/create<br>(Default: "oauth")
 -l, --log    |  Enable gmusicapi logging
 -m, --match  |  Enable scan and match
--d, --dry-run|  Output list of songs that would be uploaded
+-e, -exclude |  Exclude file paths matching a Python regex pattern<br>This option can be set multiple times
+-d, --dry-run|  Output list of songs that would be uploaded and excluded
 -q, --quiet  |  Don't output status messages<br>-l,--log will display gmusicapi warnings<br>-d,--dry-run will display song list
 
 **Example:** ``gmupload.py -m /path/to/music /other/path/to/music.mp3 /another/path/to/*.flac``

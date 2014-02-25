@@ -10,6 +10,7 @@ import argparse
 import mutagen
 import os
 import re
+
 from gmusicapi import CallFailure
 from gmusicapi.clients import Musicmanager, OAUTH_FILEPATH
 
@@ -30,10 +31,14 @@ parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('-c', '--cred', default='oauth', help='Specify oauth credential file name to use/create\n(Default: "oauth" -> ' + OAUTH_FILEPATH + ')')
 parser.add_argument('-l', '--log', action='store_true', default=False, help='Enable gmusicapi logging')
 parser.add_argument('-m', '--match', action='store_true', default=False, help='Enable scan and match')
-parser.add_argument('-d', '--dry-run', action='store_true', default=False, help='Output list of songs that would be uploaded')
+parser.add_argument('-e', '--exclude', action='append', help='Exclude file paths matching a Python regex pattern\nThis option can be set multiple times', metavar="PATTERN")
+parser.add_argument('-d', '--dry-run', action='store_true', default=False, help='Output list of songs that would be uploaded and excluded')
 parser.add_argument('-q', '--quiet', action='store_true', default=False, help='Don\'t output status messages\n-l,--log will display gmusicapi warnings\n-d,--dry-run will display song list')
 parser.add_argument('input', nargs='*', default='.', help='Files, directories, or glob patterns to upload\nDefaults to current directory if none given')
 opts = parser.parse_args()
+
+# Pre-compile regex for exclude option.
+excludes = re.compile("|".join(pattern.decode('utf8') for pattern in opts.exclude)) if opts.exclude else None
 
 MM = Musicmanager(debug_logging=opts.log)
 
@@ -121,6 +126,17 @@ def do_upload(files, total):
 		_print("\nThese files may need to be synced again.\n")
 
 
+def exclude_path(path):
+	"""
+	Exclude file paths based on user input.
+	"""
+
+	if excludes and excludes.search(path):
+		return True
+	else:
+		return False
+
+
 def filter_tags(song):
 	"""
 	Filters out a missing artist, album, title, or track tag to improve matching accuracy.
@@ -144,21 +160,29 @@ def get_file_list():
 	"""
 
 	files = []
+	exclude_files = []
 
 	for i in opts.input:
 		i = i.decode('utf8')
 
 		if os.path.isfile(i) and i.lower().endswith(formats):
-			files.append(i)
+			if not exclude_path(os.path.abspath(i)):
+				files.append(i)
+			else:
+				exclude_files.append(i)
 
 		if os.path.isdir(i):
 			for dirpath, dirnames, filenames in os.walk(i):
 				for filename in filenames:
 					if filename.lower().endswith(formats):
 						file = os.path.join(dirpath, filename)
-						files.append(file)
 
-	return files
+						if not exclude_path(os.path.abspath(file)):
+							files.append(file)
+						else:
+							exclude_files.append(file)
+
+	return files, exclude_files
 
 
 def get_google_songs():
@@ -185,14 +209,14 @@ def get_google_songs():
 	return google_songs
 
 
-def get_local_songs():
+def get_local_songs(files):
 	"""
 	Load song list from local system.
 	"""
 
 	local_songs = {}
 
-	for file in get_file_list():
+	for file in files:
 		song = mutagen.File(file, easy=True)
 
 		tags = []
@@ -210,7 +234,9 @@ def main():
 	do_auth()
 
 	_print("Loading local songs...")
-	local_songs = get_local_songs()
+	files, exclude_files = get_file_list()
+	_print("Excluded {0} local songs".format(len(exclude_files)))
+	local_songs = get_local_songs(files)
 	_print("Loaded {0} local songs\n".format(len(local_songs)))
 
 	_print("Loading Google Music songs...")
@@ -219,26 +245,34 @@ def main():
 
 	_print("Scanning for missing songs...")
 
-	files = []
+	upload_files = []
 
 	# Compare local and Google Music library lists.
 	for key, song in local_songs.iteritems():
 		if key not in google_songs:
-			files.append(song)
+			upload_files.append(song)
 
 	# Upload any local songs not in your Google Music library.
-	if files:
+	if upload_files:
 		# Sort the list for sensible output.
-		files.sort()
-		total = len(files)
+		upload_files.sort()
+		total = len(upload_files)
 
 		if opts.dry_run:
 			_print("Found {0} songs\n".format(total))
-			for file in files:
-				print(file)
+			if exclude_files:
+				_print("Songs to exclude:\n")
+				for file in exclude_files:
+					print(file.encode('utf8'))
+
+				print()
+
+			_print("Songs to upload:\n")
+			for file in upload_files:
+				print(file.encode('utf8'))
 		else:
 			_print("Uploading {0} songs to Google Music\n".format(total))
-			do_upload(files, total)
+			do_upload(upload_files, total)
 	else:
 		_print("No songs to upload")
 

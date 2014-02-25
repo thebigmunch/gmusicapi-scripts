@@ -8,6 +8,8 @@ You may contact the author (thebigmunch) in #gmusicapi on irc.freenode.net or by
 from __future__ import print_function, unicode_literals
 import argparse
 import os
+import re
+
 from gmusicapi import CallFailure
 from gmusicapi.clients import Musicmanager, OAUTH_FILEPATH
 
@@ -18,10 +20,14 @@ parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('-c', '--cred', default='oauth', help='Specify oauth credential file name to use/create\n(Default: "oauth" -> ' + OAUTH_FILEPATH + ')')
 parser.add_argument('-l', '--log', action='store_true', default=False, help='Enable gmusicapi logging')
 parser.add_argument('-m', '--match', action='store_true', default=False, help='Enable scan and match')
-parser.add_argument('-d', '--dry-run', action='store_true', default=False, help='Output list of songs that would be uploaded')
+parser.add_argument('-e', '--exclude', action='append', help='Exclude file paths matching a Python regex pattern\nThis option can be set multiple times', metavar="PATTERN")
+parser.add_argument('-d', '--dry-run', action='store_true', default=False, help='Output list of songs that would be uploaded and excluded')
 parser.add_argument('-q', '--quiet', action='store_true', default=False, help='Don\'t output status messages\n-l,--log will display gmusicapi warnings\n-d,--dry-run will display song list')
 parser.add_argument('input', nargs='*', default='.', help='Files, directories, or glob patterns to upload\nDefaults to current directory if none given')
 opts = parser.parse_args()
+
+# Pre-compile regex for exclude option.
+excludes = re.compile("|".join(pattern.decode('utf8') for pattern in opts.exclude)) if opts.exclude else None
 
 MM = Musicmanager(debug_logging=opts.log)
 
@@ -89,27 +95,46 @@ def do_upload(files, total):
 		_print("\nThese files may need to be synced again.\n")
 
 
+def exclude_path(path):
+	"""
+	Exclude file paths based on user input.
+	"""
+
+	if excludes and excludes.search(path):
+		return True
+	else:
+		return False
+
+
 def get_file_list():
 	"""
 	Creates a list of supported files from user input(s).
 	"""
 
 	files = []
+	exclude_files = []
 
 	for i in opts.input:
 		i = i.decode('utf8')
 
 		if os.path.isfile(i) and i.lower().endswith(formats):
-			files.append(i)
+			if not exclude_path(os.path.abspath(i)):
+				files.append(i)
+			else:
+				exclude_files.append(i)
 
 		if os.path.isdir(i):
 			for dirpath, dirnames, filenames in os.walk(i):
 				for filename in filenames:
 					if filename.lower().endswith(formats):
 						file = os.path.join(dirpath, filename)
-						files.append(file)
 
-	return files
+						if not exclude_path(os.path.abspath(file)):
+							files.append(file)
+						else:
+							exclude_files.append(file)
+
+	return files, exclude_files
 
 
 def main():
@@ -117,6 +142,7 @@ def main():
 
 	_print("Loading local songs...")
 	files, exclude_files = get_file_list()
+	_print("Excluded {0} local songs".format(len(exclude_files)))
 
 	# Upload songs to your Google Music library.
 	if files:
@@ -126,8 +152,16 @@ def main():
 
 		if opts.dry_run:
 			_print("Found {0} songs\n".format(total))
+			if exclude_files:
+				_print("Songs to exclude:\n")
+				for file in exclude_files:
+					print(file.encode('utf8'))
+
+				print()
+
+			_print("Songs to upload:\n")
 			for file in files:
-				print(file)
+				print(file.encode('utf8'))
 		else:
 			_print("Uploading {0} songs to Google Music\n".format(total))
 			do_upload(files, total)
