@@ -9,6 +9,7 @@ from __future__ import print_function, unicode_literals
 import argparse
 import os
 import re
+import sys
 
 from gmusicapi import CallFailure
 from gmusicapi.clients import Musicmanager, OAUTH_FILEPATH
@@ -71,6 +72,7 @@ def do_upload(files, total):
 
 		try:
 			_print("Uploading  {0}".format(file), end="\r")
+			sys.stdout.flush()
 			uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=opts.match)
 		except CallFailure as e:
 			_print("({num:>{pad}}/{total}) Failed to upload  {file} | {error}".format(num=filenum, total=total, file=file, error=e, pad=pad).encode('utf8'))
