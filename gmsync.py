@@ -166,8 +166,6 @@ def get_google_songs():
 	Load song list from Google Music library.
 	"""
 
-	_print("Loading Google Music songs...")
-
 	google_songs = {}
 
 	try:
@@ -184,8 +182,6 @@ def get_google_songs():
 
 		google_songs[key] = song
 
-	_print("Loaded {0} Google Music songs\n".format(len(google_songs)))
-
 	return google_songs
 
 
@@ -193,8 +189,6 @@ def get_local_songs():
 	"""
 	Load song list from local system.
 	"""
-
-	_print("Loading local songs...")
 
 	local_songs = {}
 
@@ -209,16 +203,19 @@ def get_local_songs():
 
 		local_songs[key] = file
 
-	_print("Loaded {0} local songs\n".format(len(local_songs)))
-
 	return local_songs
 
 
 def main():
 	do_auth()
 
+	_print("Loading local songs...")
 	local_songs = get_local_songs()
+	_print("Loaded {0} local songs\n".format(len(local_songs)))
+
+	_print("Loading Google Music songs...")
 	google_songs = get_google_songs()
+	_print("Loaded {0} Google Music songs\n".format(len(google_songs)))
 
 	_print("Scanning for missing songs...")
 
