@@ -31,4 +31,4 @@ You can contact the author in ``#gmusicapi`` on ``irc.freenode.net`` or by [e-ma
 
 -----
 
-Copyright (c) 2013 [thebigmunch](mailto:munchicus+gmusicapi@gmail.com). Licensed under the MIT License. See [LICENSE](LICENSE).
+Copyright (c) 2014 [thebigmunch](mailto:mail@thebigmunch.me). Licensed under the MIT License. See [LICENSE](LICENSE).
