@@ -14,7 +14,7 @@ import sys
 from gmusicapi import CallFailure
 from gmusicapi.clients import Musicmanager, OAUTH_FILEPATH
 
-formats = ('.mp3', '.flac', '.ogg', '.m4a')
+FORMATS = ('.mp3', '.flac', '.ogg', '.m4a')
 
 # Parse command line for arguments.
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
@@ -30,14 +30,14 @@ opts = parser.parse_args()
 # Pre-compile regex for exclude option.
 excludes = re.compile("|".join(pattern.decode('utf8') for pattern in opts.exclude)) if opts.exclude else None
 
-MM = Musicmanager(debug_logging=opts.log)
+mm = Musicmanager(debug_logging=opts.log)
 
 _print = print if not opts.quiet else lambda *a, **k: None
 
 
 def do_auth():
 	"""
-	Authenticates the MM client.
+	Authenticates the mm client.
 	"""
 
 	attempts = 0
@@ -46,12 +46,12 @@ def do_auth():
 
 	# Attempt to login. Perform oauth only when necessary.
 	while attempts < 3:
-		if MM.login(oauth_credentials=oauth_file):
+		if mm.login(oauth_credentials=oauth_file):
 			break
-		MM.perform_oauth(storage_filepath=oauth_file)
+		mm.perform_oauth(storage_filepath=oauth_file)
 		attempts += 1
 
-	if not MM.is_authenticated():
+	if not mm.is_authenticated():
 		_print("Sorry, login failed.")
 		return
 
@@ -73,7 +73,7 @@ def do_upload(files, total):
 		try:
 			_print("Uploading  {0}".format(file), end="\r")
 			sys.stdout.flush()
-			uploaded, matched, not_uploaded = MM.upload(file, transcode_quality="320k", enable_matching=opts.match)
+			uploaded, matched, not_uploaded = mm.upload(file, transcode_quality="320k", enable_matching=opts.match)
 		except CallFailure as e:
 			_print("({num:>{pad}}/{total}) Failed to upload  {file} | {error}".format(num=filenum, total=total, file=file, error=e, pad=pad).encode('utf8'))
 			errors[file] = e
@@ -119,7 +119,7 @@ def get_file_list():
 	for i in opts.input:
 		i = i.decode('utf8')
 
-		if os.path.isfile(i) and i.lower().endswith(formats):
+		if os.path.isfile(i) and i.lower().endswith(FORMATS):
 			if not exclude_path(os.path.abspath(i)):
 				files.append(i)
 			else:
@@ -128,7 +128,7 @@ def get_file_list():
 		if os.path.isdir(i):
 			for dirpath, dirnames, filenames in os.walk(i):
 				for filename in filenames:
-					if filename.lower().endswith(formats):
+					if filename.lower().endswith(FORMATS):
 						file = os.path.join(dirpath, filename)
 
 						if not exclude_path(os.path.abspath(file)):
@@ -171,8 +171,8 @@ def main():
 		else:
 			_print("No songs to upload")
 
-	# Log out MM session when finished.
-	MM.logout()
+	# Log out mm session when finished.
+	mm.logout()
 	_print("\nAll done!")
 
 
@@ -180,5 +180,5 @@ if __name__ == '__main__':
 	try:
 		main()
 	except KeyboardInterrupt:
-		MM.logout()
+		mm.logout()
 		print("\n\nExiting")
