@@ -200,7 +200,7 @@ def main():
 	else:
 		filters = None
 
-	songs = get_google_songs(filters, cli['filter'])
+	songs = get_google_songs(filters, cli['all'])
 
 	# Sort the list for sensible output.
 	songs.sort(key=lambda song: (song['artist'], song['album'], song['track_number']))
