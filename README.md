@@ -3,6 +3,10 @@ gmusicapi-scripts
 
 A collection of scripts for [gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API).
 
+### gmdownload
+
+[gmdownload.py](gmdownload.py) is a dumb download script. It will download all songs matching the filters.
+
 ### gmsync
 
 [gmsync.py](gmsync.py) is a smart upload script. It will only make an upload request for songs that are not already in your Google Music library.
@@ -15,7 +19,7 @@ A collection of scripts for [gmusicapi](https://github.com/simon-weber/Unofficia
 * Python 2.7 (Probably 2.6, but untested.)
 * [docopt](https://github.com/docopt/docopt)
 * [gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API)
-* mutagen ([gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API) should install this for you)
+* [mutagen](https://code.google.com/p/mutagen/) ([gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API) should install this for you)
 * avconv (See [here](http://unofficial-google-music-api.readthedocs.org/en/latest/usage.html#usage))
 
 ## Installation
