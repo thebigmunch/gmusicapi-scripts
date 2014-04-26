@@ -1,12 +1,32 @@
 #!/usr/bin/env python
 
 """
-An upload script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
-You may contact the author (thebigmunch) in #gmusicapi on irc.freenode.net or by e-mail at mail@thebigmunch.me.
+A sync script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
+More information at https://github.com/thebigmunch/gmusicapi-scripts.
+
+Usage:
+  gmsync.py (-h | --help)
+  gmsync.py [options] [<input>...]
+
+Arguments:
+  input                          Files, directories, or glob patterns to upload.
+                                 Defaults to current directory.
+
+Options:
+  -h, --help                     Display help message.
+  -c CRED, --cred CRED           Specify oauth credential file name to use/create. [Default: oauth]
+  -l, --log                      Enable gmusicapi logging.
+  -m, --match                    Enable scan and match.
+  -d, --dry-run                  Output list of songs that would be uploaded.
+  -q, --quiet                    Don't output status messages.
+                                 With -l,--log will display gmusicapi warnings.
+                                 With -d,--dry-run will display song list.
+  -e PATTERN, --exclude PATTERN  Exclude file paths matching a Python regex pattern.
+                                 This option can be set multiple times.
 """
 
 from __future__ import print_function, unicode_literals
-import argparse
+from docopt import docopt
 import mutagen
 import os
 import re
@@ -27,33 +47,15 @@ lead_space = re.compile('^\s+')
 trail_space = re.compile('\s+$')
 the = re.compile('^the\s+', re.I)
 
-# Parse command line for arguments.
-parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-parser.add_argument('-c', '--cred', default='oauth', help='Specify oauth credential file name to use/create\n(Default: "oauth" -> ' + OAUTH_FILEPATH + ')')
-parser.add_argument('-l', '--log', action='store_true', default=False, help='Enable gmusicapi logging')
-parser.add_argument('-m', '--match', action='store_true', default=False, help='Enable scan and match')
-parser.add_argument('-e', '--exclude', action='append', help='Exclude file paths matching a Python regex pattern\nThis option can be set multiple times', metavar="PATTERN")
-parser.add_argument('-d', '--dry-run', action='store_true', default=False, help='Output list of songs that would be uploaded and excluded')
-parser.add_argument('-q', '--quiet', action='store_true', default=False, help='Don\'t output status messages\n-l,--log will display gmusicapi warnings\n-d,--dry-run will display song list')
-parser.add_argument('input', nargs='*', default='.', help='Files, directories, or glob patterns to upload\nDefaults to current directory if none given')
-opts = parser.parse_args()
-
-# Pre-compile regex for exclude option.
-excludes = re.compile("|".join(pattern.decode('utf8') for pattern in opts.exclude)) if opts.exclude else None
-
-mm = Musicmanager(debug_logging=opts.log)
-
-_print = print if not opts.quiet else lambda *a, **k: None
-
 
 def do_auth():
 	"""
-	Authenticates the mm client.
+	Authenticate the mm client.
 	"""
 
 	attempts = 0
 
-	oauth_file = os.path.join(os.path.dirname(OAUTH_FILEPATH), opts.cred + '.cred')
+	oauth_file = os.path.join(os.path.dirname(OAUTH_FILEPATH), cli['cred'] + '.cred')
 
 	# Attempt to login. Perform oauth only when necessary.
 	while attempts < 3:
@@ -71,7 +73,7 @@ def do_auth():
 
 def clean_tag(tag):
 	"""
-	Cleans up metadata tags to improve matching accuracy.
+	Clean up metadata tags to improve matching accuracy.
 	"""
 
 	tag = unicode(tag)  # Convert tag to unicode.
@@ -91,7 +93,7 @@ def clean_tag(tag):
 
 def do_upload(files, total):
 	"""
-	Uploads the files and outputs the upload response with a counter.
+	Upload the files and outputs the upload response with a counter.
 	"""
 
 	filenum = 0
@@ -104,7 +106,7 @@ def do_upload(files, total):
 		try:
 			_print("Uploading  {0}".format(file), end="\r")
 			sys.stdout.flush()
-			uploaded, matched, not_uploaded = mm.upload(file, transcode_quality="320k", enable_matching=opts.match)
+			uploaded, matched, not_uploaded = mm.upload(file, transcode_quality="320k", enable_matching=cli['match'])
 		except CallFailure as e:
 			_print("({num:>{pad}}/{total}) Failed to upload  {file} | {error}".format(num=filenum, total=total, file=file, error=e, pad=pad).encode('utf8'))
 			errors[file] = e
@@ -141,7 +143,7 @@ def exclude_path(path):
 
 def filter_tags(song):
 	"""
-	Filters out a missing artist, album, title, or track tag to improve matching accuracy.
+	Filter out a missing artist, album, title, or track tag to improve matching accuracy.
 	"""
 
 	# Replace track numbers with 0 if no tag exists.
@@ -158,13 +160,13 @@ def filter_tags(song):
 
 def get_file_list():
 	"""
-	Creates a list of supported files from user input(s).
+	Create a list of supported files from user input(s).
 	"""
 
 	files = []
 	exclude_files = []
 
-	for i in opts.input:
+	for i in cli['input']:
 		i = i.decode('utf8')
 
 		if os.path.isfile(i) and i.lower().endswith(FORMATS):
@@ -260,7 +262,7 @@ def main():
 
 	total = len(upload_files)
 
-	if opts.dry_run:
+	if cli['dry-run']:
 		_print("Found {0} songs".format(total))
 
 		if upload_files:
@@ -285,6 +287,19 @@ def main():
 
 
 if __name__ == '__main__':
+	cli = docopt(__doc__)
+	cli = dict((key.lstrip("-<>").rstrip(">"), value) for key, value in cli.items())  # Remove superfluous characters from cli keys
+
+	if not cli['input']:
+		cli['input'] = ['.']
+
+	# Pre-compile regex for exclude option.
+	excludes = re.compile("|".join(pattern.decode('utf8') for pattern in cli['exclude'])) if cli['exclude'] else None
+
+	mm = Musicmanager(debug_logging=cli['log'])
+
+	_print = print if not cli['quiet'] else lambda *a, **k: None
+
 	try:
 		main()
 	except KeyboardInterrupt:

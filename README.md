@@ -12,7 +12,8 @@ A collection of scripts for [gmusicapi](https://github.com/simon-weber/Unofficia
 [gmupload.py](gmupload.py) is a dumb upload script. It will make an upload request for all files matching the input.
 
 ## Requirements
-* Python 2.7 (Probably 2.6, but untested. argparse module is required)
+* Python 2.7 (Probably 2.6, but untested.)
+* [docopt](https://github.com/docopt/docopt)
 * [gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API)
 * mutagen ([gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API) should install this for you)
 * avconv (See [here](http://unofficial-google-music-api.readthedocs.org/en/latest/usage.html#usage))

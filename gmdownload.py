@@ -2,16 +2,38 @@
 
 """
 A download script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
-You may contact the author (thebigmunch) in #gmusicapi on irc.freenode.net or by e-mail at mail@thebigmunch.me.
+More information at https://github.com/thebigmunch/gmusicapi-scripts.
+
+Usage:
+  gmdownload.py (-h | --help)
+  gmdownload.py [options] [<output>]
+
+Arguments:
+  output                Output file or directory name which can include a template pattern.
+                        Defaults to name suggested by Google Music in your current directory.
+
+Options:
+  -h, --help            Display help message.
+  -c CRED, --cred CRED  Specify oauth credential file name to use/create. [Default: oauth]
+  -l, --log             Enable gmusicapi logging.
+  -d, --dry-run         Output list of songs that would be downloaded.
+  -q, --quiet           Don't output status messages.
+                        With -l,--log will display gmusicapi warnings.
+                        With -d,--dry-run will display song list.
+  -f, --filter          Filter Google songs by field:pattern pair (e.g. "artist:Muse").
+                        Songs can match any filter criteria.
+                        This option can be set multiple times.
+  -a, --all             Songs must match all filter criteria.
 """
 
 from __future__ import print_function, unicode_literals
-import argparse
+from docopt import docopt
 import mutagen
 import os
 import re
 import sys
 import shutil
+
 from gmusicapi import CallFailure
 from gmusicapi.clients import Musicmanager, OAUTH_FILEPATH
 
@@ -30,30 +52,15 @@ TEMPLATE_PATTERNS = {
 	'%genre%': 'genre', '%albumartist%': 'albumartist', '%disc%': 'discnumber'
 }
 
-# Parse command line for arguments.
-parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-parser.add_argument('-c', '--cred', default='oauth', help='Specify oauth credential file name to use/create\n(Default: "oauth" -> ' + OAUTH_FILEPATH + ')')
-parser.add_argument('-l', '--log', action='store_true', default=False, help='Enable gmusicapi logging')
-parser.add_argument('-f', '--filter', action='append', help='Filter Google songs by field:pattern pair (e.g. "artist:Muse")\nThis option can be set multiple times')
-parser.add_argument('-a', '--all', action='store_true', default=False, help='Songs must match all filter criteria\n(Default: Songs can match any filter criteria')
-parser.add_argument('-d', '--dry-run', action='store_true', default=False, help='Output list of songs that would be uploaded')
-parser.add_argument('-q', '--quiet', action='store_true', default=False, help='Don\'t output status messages\n-l,--log will display gmusicapi warnings\n-d,--dry-run will display song list')
-parser.add_argument('output', nargs='?', default=os.getcwd(), help='Output file or directory name which can include a template pattern\nDefaults to name suggested by Google Music in your current directory')
-opts = parser.parse_args()
-
-mm = Musicmanager(debug_logging=opts.log)
-
-_print = print if not opts.quiet else lambda *a, **k: None
-
 
 def do_auth():
 	"""
-	Authenticates the mm client.
+	Authenticate the mm client.
 	"""
 
 	attempts = 0
 
-	oauth_file = os.path.join(os.path.dirname(OAUTH_FILEPATH), opts.cred + '.cred')
+	oauth_file = os.path.join(os.path.dirname(OAUTH_FILEPATH), cli['cred'] + '.cred')
 
 	# Attempt to login. Perform oauth only when necessary.
 	while attempts < 3:
@@ -71,7 +78,7 @@ def do_auth():
 
 def do_download(songs, total):
 	"""
-	Downloads the songs with a counter.
+	Download songs with a counter.
 	"""
 
 	songnum = 0
@@ -133,7 +140,7 @@ def get_google_songs(filters=None, filter_all=False):
 
 def make_file_name(filename, audio):
 	"""
-	Creates directory structure and file name based on user input.
+	Create directory structure and file name based on user input.
 	"""
 
 	with open('temp.mp3', 'wb') as temp:
@@ -141,8 +148,8 @@ def make_file_name(filename, audio):
 
 	tag = mutagen.File(temp.name, easy=True)
 
-	if opts.output != os.getcwd():
-		drive, path = os.path.splitdrive(opts.output)
+	if cli['output'] != os.getcwd():
+		drive, path = os.path.splitdrive(cli['output'])
 		parts = []
 
 		while True:
@@ -186,20 +193,20 @@ def make_file_name(filename, audio):
 def main():
 	do_auth()
 
-	if opts.filter:
+	if cli['filter']:
 		filters = [
-			tuple(filter.split(':', 1)) for filter in opts.filter if filter.split(':', 1)[0] in FILTER_FIELDS
+			tuple(filter.split(':', 1)) for filter in cli['filter'] if filter.split(':', 1)[0] in FILTER_FIELDS
 		]
 	else:
 		filters = None
 
-	songs = get_google_songs(filters, opts.all)
+	songs = get_google_songs(filters, cli['filter'])
 
 	# Sort the list for sensible output.
 	songs.sort(key=lambda song: (song['artist'], song['album'], song['track_number']))
 	total = len(songs)
 
-	if opts.dry_run:
+	if cli['dry-run']:
 		_print("Found {0} songs\n".format(total))
 
 		if songs:
@@ -221,6 +228,18 @@ def main():
 
 
 if __name__ == '__main__':
+	cli = docopt(__doc__)
+	cli = dict((key.lstrip("-<>").rstrip(">"), value) for key, value in cli.items())  # Remove superfluous characters from cli keys
+
+	if not cli['output']:
+		cli['output'] = os.getcwd()
+
+	print(cli)
+
+	mm = Musicmanager(debug_logging=cli['log'])
+
+	_print = print if not cli['quiet'] else lambda *a, **k: None
+
 	try:
 		main()
 	except KeyboardInterrupt:
