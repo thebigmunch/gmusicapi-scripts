@@ -6,24 +6,24 @@ More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
   gmdownload.py (-h | --help)
-  gmdownload.py [options] [<output>]
+  gmdownload.py [-f FILTER]... [options] [<output>]
 
 Arguments:
   output                Output file or directory name which can include a template pattern.
                         Defaults to name suggested by Google Music in your current directory.
 
 Options:
-  -h, --help            Display help message.
-  -c CRED, --cred CRED  Specify oauth credential file name to use/create. [Default: oauth]
-  -l, --log             Enable gmusicapi logging.
-  -d, --dry-run         Output list of songs that would be downloaded.
-  -q, --quiet           Don't output status messages.
-                        With -l,--log will display gmusicapi warnings.
-                        With -d,--dry-run will display song list.
-  -f, --filter          Filter Google songs by field:pattern pair (e.g. "artist:Muse").
-                        Songs can match any filter criteria.
-                        This option can be set multiple times.
-  -a, --all             Songs must match all filter criteria.
+  -h, --help                    Display help message.
+  -c CRED, --cred CRED          Specify oauth credential file name to use/create. [Default: oauth]
+  -l, --log                     Enable gmusicapi logging.
+  -d, --dry-run                 Output list of songs that would be downloaded.
+  -q, --quiet                   Don't output status messages.
+                                With -l,--log will display gmusicapi warnings.
+                                With -d,--dry-run will display song list.
+  -f FILTER, --filter FILTER    Filter Google songs by field:pattern pair (e.g. "artist:Muse").
+                                Songs can match any filter criteria.
+                                This option can be set multiple times.
+  -a, --all                     Songs must match all filter criteria.
 """
 
 from __future__ import print_function, unicode_literals
@@ -233,8 +233,6 @@ if __name__ == '__main__':
 
 	if not cli['output']:
 		cli['output'] = os.getcwd()
-
-	print(cli)
 
 	mm = Musicmanager(debug_logging=cli['log'])
 
