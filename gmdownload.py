@@ -9,8 +9,8 @@ Usage:
   gmdownload.py [-f FILTER]... [options] [<output>]
 
 Arguments:
-  output                Output file or directory name which can include a template pattern.
-                        Defaults to name suggested by Google Music in your current directory.
+  output                        Output file or directory name which can include a template pattern.
+                                Defaults to name suggested by Google Music in your current directory.
 
 Options:
   -h, --help                    Display help message.
