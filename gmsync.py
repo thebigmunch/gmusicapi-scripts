@@ -22,6 +22,8 @@ Arguments:
 
 Options:
   -h, --help                     Display help message.
+  --uploader-id ID               A unique id given as a MAC address (e.g. '00:11:22:33:AA:BB').
+                                 This should only be provided when the default does not work.
   -c CRED, --cred CRED           Specify oauth credential file name to use/create. [Default: oauth]
   -l, --log                      Enable gmusicapi logging.
   -m, --match                    Enable scan and match.
@@ -133,13 +135,17 @@ def do_auth():
 
 	oauth_file = os.path.join(os.path.dirname(OAUTH_FILEPATH), cli['cred'] + '.cred')
 
-	if not mm.login(oauth_credentials=oauth_file):
-		try:
-			mm.perform_oauth(storage_filepath=oauth_file)
-		except:
-			print("\nUnable to login with specified oauth code.")
+	try:
+		if not mm.login(oauth_credentials=oauth_file, uploader_id=cli['uploader-id']):
+			try:
+				mm.perform_oauth(storage_filepath=oauth_file)
+			except:
+				print("\nUnable to login with specified oauth code.")
 
-		mm.login(oauth_credentials=oauth_file)
+			mm.login(oauth_credentials=oauth_file, uploader_id=cli['uploader-id'])
+	except (OSError, ValueError) as e:
+		print(e.args[0])
+		return False
 
 	if not mm.is_authenticated():
 		return False
