@@ -176,7 +176,7 @@ def make_file_name(filename, audio):
 				if char in parts[i]:
 					parts[i] = parts[i].replace(char, INVALID_CHARS[char])
 
-		filename = os.path.join(drive, *parts) + '.mp3'
+		filename = os.path.join(drive, os.sep, *parts) + '.mp3'
 
 		dirname, __ = os.path.split(filename)
 
