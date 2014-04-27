@@ -462,6 +462,9 @@ if __name__ == '__main__':
 	if not cli['input']:
 		cli['input'] = ['.']
 
+	if not cli['output']:
+		cli['output'] = os.getcwd()
+
 	# Pre-compile regex for exclude option.
 	excludes = re.compile("|".join(pattern.decode('utf8') for pattern in cli['exclude'])) if cli['exclude'] else None
 
