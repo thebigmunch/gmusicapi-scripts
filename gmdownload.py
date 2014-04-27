@@ -58,22 +58,22 @@ def do_auth():
 	Authenticate the mm client.
 	"""
 
-	attempts = 0
-
 	oauth_file = os.path.join(os.path.dirname(OAUTH_FILEPATH), cli['cred'] + '.cred')
 
-	# Attempt to login. Perform oauth only when necessary.
-	while attempts < 3:
-		if mm.login(oauth_credentials=oauth_file):
-			break
-		mm.perform_oauth(storage_filepath=oauth_file)
-		attempts += 1
+	if not mm.login(oauth_credentials=oauth_file):
+		try:
+			mm.perform_oauth(storage_filepath=oauth_file)
+		except:
+			print("\nUnable to login with specified oauth code.")
+
+		mm.login(oauth_credentials=oauth_file)
 
 	if not mm.is_authenticated():
-		_print("Sorry, login failed.")
-		return
+		return False
 
 	_print("Successfully logged in.\n")
+
+	return True
 
 
 def do_download(songs, total):
@@ -191,7 +191,9 @@ def make_file_name(filename, audio):
 
 
 def main():
-	do_auth()
+	if not do_auth():
+		_print("\nSorry, login failed.")
+		sys.exit(0)
 
 	if cli['filter']:
 		filters = [
