@@ -178,13 +178,13 @@ def make_file_name(filename, audio):
 
 		filename = os.path.join(drive, *parts) + '.mp3'
 
-		basename, __ = os.path.split(filename)
+		dirname, __ = os.path.split(filename)
 
-		if basename:
+		if dirname:
 			try:
-				os.makedirs(basename)
+				os.makedirs(dirname)
 			except OSError:
-				if not os.path.isdir(basename):
+				if not os.path.isdir(dirname):
 					raise
 
 	return filename
