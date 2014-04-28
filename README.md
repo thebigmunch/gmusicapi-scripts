@@ -9,7 +9,7 @@ A collection of scripts for [gmusicapi](https://github.com/simon-weber/Unofficia
 
 ### gmsync
 
-[gmsync.py](gmsync.py) is a smart upload script. It will only make an upload request for songs that are not already in your Google Music library.
+[gmsync.py](gmsync.py) is a smart sync script. It can both upload and download songs. Songs from the source that exist on the destination will not be uploaded or downloaded.
 
 ### gmupload
 
