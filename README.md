@@ -32,7 +32,7 @@ See the [USAGE.md](USAGE.md) file or the online [Wiki](https://github.com/thebig
 
 ## Contact
 
-You can contact the author in ``#gmusicapi`` on ``irc.freenode.net`` or by [e-mail](mailto:munchicus+gmusicapi@gmail.com)
+You can contact the author in ``#gmusicapi`` on ``irc.freenode.net`` or by [e-mail](mailto:mail@thebigmunch.me)
 
 -----
 
