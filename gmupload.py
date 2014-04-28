@@ -6,7 +6,7 @@ More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
   gmupload.py (-h | --help)
-  gmupload.py [-e PATTERN]... [options] [<input>...]
+  gmupload.py [-e PATTERN]... [options] [<input>]...
 
 Arguments:
   input                          Files, directories, or glob patterns to upload.

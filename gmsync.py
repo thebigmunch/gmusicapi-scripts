@@ -6,9 +6,9 @@ More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
   gmsync.py (-h | --help)
-  gmsync.py up [-e PATTERN]... [options] [<input>...]
+  gmsync.py up [-e PATTERN]... [options] [<input>]...
   gmsync.py down [-f FILTER]... [options] [<output>]
-  gmsync.py [-e PATTERN]... [options] [<input>...]
+  gmsync.py [-e PATTERN]... [options] [<input>]...
 
 Commands:
   up                             Sync local songs to Google Music. Default behavior.
