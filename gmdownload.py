@@ -14,9 +14,9 @@ Arguments:
 
 Options:
   -h, --help                    Display help message.
-  --uploader-id ID              A unique id given as a MAC address (e.g. '00:11:22:33:AA:BB').
-                                This should only be provided when the default does not work.
   -c CRED, --cred CRED          Specify oauth credential file name to use/create. [Default: oauth]
+  -U ID --uploader-id ID        A unique id given as a MAC address (e.g. '00:11:22:33:AA:BB').
+                                This should only be provided when the default does not work.
   -l, --log                     Enable gmusicapi logging.
   -d, --dry-run                 Output list of songs that would be downloaded.
   -q, --quiet                   Don't output status messages.
