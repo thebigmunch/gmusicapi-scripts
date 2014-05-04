@@ -98,7 +98,8 @@ output                 | Output file or directory name which can include templat
 
 \* *Filter fields can be any of artist, title, album, or album_artist*
 
-#### Output pattern replacements
+
+## Output pattern replacements
 
 Pattern       | Field
 --------------|--------
@@ -111,6 +112,7 @@ Pattern       | Field
 %genre%       | genre
 %albumartist% | albumartist
 %disc%        | discnumber
+%suggested%   | Filename suggested by Google
 
 **Examples:**
 

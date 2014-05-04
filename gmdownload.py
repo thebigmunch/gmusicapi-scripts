@@ -35,6 +35,7 @@ import os
 import re
 import sys
 import shutil
+import tempfile
 
 from gmusicapi import CallFailure
 from gmusicapi.clients import Musicmanager, OAUTH_FILEPATH
@@ -97,13 +98,22 @@ def do_download(songs, total):
 		try:
 			_print("Downloading  {0} by {1}".format(song['title'], song['artist']), end="\r")
 			sys.stdout.flush()
-			filename, audio = mm.download_song(song['id'])
+			suggested_filename, audio = mm.download_song(song['id'])
 		except CallFailure as e:
-			_print("({num:>{pad}}/{total}) Failed to download  {file} | {error}".format(num=songnum, total=total, file=filename, error=e, pad=pad).encode('utf8'))
-			errors[filename] = e
+			_print("({num:>{pad}}/{total}) Failed to download  {file} | {error}".format(num=songnum, total=total, file=suggested_filename, error=e, pad=pad).encode('utf8'))
+			errors[suggested_filename] = e
 		else:
-			filename = make_file_name(filename, audio)
-			shutil.move('temp.mp3', filename)
+			with tempfile.NamedTemporaryFile(delete=False) as temp:
+					temp.write(audio)
+
+			tag = mutagen.File(temp.name, easy=True)
+
+			if cli['output'] != os.getcwd():
+				filename = make_file_name(suggested_filename, tag)
+			else:
+				filename = suggested_filename
+
+			shutil.move(temp.name, filename)
 			_print("({num:>{pad}}/{total}) Successfully downloaded  {file}".format(num=songnum, total=total, file=filename, pad=pad).encode('utf8'))
 
 	if errors:
@@ -144,54 +154,54 @@ def get_google_songs(filters=None, filter_all=False):
 	return google_songs
 
 
-def make_file_name(filename, audio):
+def make_file_name(suggested_filename, tag):
 	"""
 	Create directory structure and file name based on user input.
 	"""
 
-	with open('temp.mp3', 'wb') as temp:
-		temp.write(audio)
+	drive, path = os.path.splitdrive(cli['output'])
+	parts = []
 
-	tag = mutagen.File(temp.name, easy=True)
+	while True:
+		newpath, tail = os.path.split(path)
 
-	if cli['output'] != os.getcwd():
-		drive, path = os.path.splitdrive(cli['output'])
-		parts = []
+		if newpath == path:
+			break
 
-		while True:
-			newpath, tail = os.path.split(path)
+		parts.append(tail)
+		path = newpath
 
-			if newpath == path:
-				break
+	parts.reverse()
 
-			parts.append(tail)
-			path = newpath
+	for i, part in enumerate(parts):
+		if "%suggested%" in part:
+			parts[i] = parts[i].replace("%suggested%", suggested_filename.replace('.mp3', ''))
 
-		parts.reverse()
+		for key in TEMPLATE_PATTERNS:
+			if key in part and TEMPLATE_PATTERNS[key] in tag:
+				if key == '%tr2%':
+					tag['tracknumber'] = tag['tracknumber'][0].zfill(2)
+					tag.save()
 
-		for i, part in enumerate(parts):
-			for key in TEMPLATE_PATTERNS:
-				if key in part and TEMPLATE_PATTERNS[key] in tag:
-					if key == '%tr2%':
-						tag['tracknumber'] = tag['tracknumber'][0].zfill(2)
-						tag.save()
+				parts[i] = parts[i].replace(key, tag[TEMPLATE_PATTERNS[key]][0])
 
-					parts[i] = parts[i].replace(key, tag[TEMPLATE_PATTERNS[key]][0])
+		for char in INVALID_CHARS:
+			if char in parts[i]:
+				parts[i] = parts[i].replace(char, INVALID_CHARS[char])
 
-			for char in INVALID_CHARS:
-				if char in parts[i]:
-					parts[i] = parts[i].replace(char, INVALID_CHARS[char])
-
+	if drive:
 		filename = os.path.join(drive, os.sep, *parts) + '.mp3'
+	else:
+		filename = os.path.join(*parts) + '.mp3'
 
-		dirname, __ = os.path.split(filename)
+	dirname, __ = os.path.split(filename)
 
-		if dirname:
-			try:
-				os.makedirs(dirname)
-			except OSError:
-				if not os.path.isdir(dirname):
-					raise
+	if dirname:
+		try:
+			os.makedirs(dirname)
+		except OSError:
+			if not os.path.isdir(dirname):
+				raise
 
 	return filename
 
