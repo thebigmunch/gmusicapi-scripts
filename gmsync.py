@@ -253,6 +253,47 @@ def filter_tags(song):
 	return [song[tag] for tag in ['artist', 'album', 'title', 'tracknumber', 'track_number'] if song.get(tag)]
 
 
+def get_local_download_path(google_songs):
+	song_paths = []
+
+	for k, song in google_songs.items():
+		drive, path = os.path.splitdrive(cli['output'])
+		parts = []
+
+		while True:
+			newpath, tail = os.path.split(path)
+
+			if newpath == path:
+				break
+
+			parts.append(tail)
+			path = newpath
+
+		parts.reverse()
+
+		for i, part in enumerate(parts):
+			for key in TEMPLATE_PATTERNS:
+				if key in part and TEMPLATE_PATTERNS[key] in song:
+					parts[i] = parts[i].replace(key, song[TEMPLATE_PATTERNS[key]])
+
+			for char in INVALID_CHARS:
+				if char in parts[i]:
+					parts[i] = parts[i].replace(char, INVALID_CHARS[char])
+
+		if drive:
+			filename = os.path.join(drive, os.sep, *parts)
+		else:
+			filename = os.path.join(*parts)
+
+		song_paths.append(filename)
+
+	common_path = os.path.commonprefix(song_paths)
+
+	local_path = [common_path] if common_path else [os.getcwd()]
+
+	return local_path
+
+
 def get_google_songs(filters=None, filter_all=False):
 	"""
 	Load song list from Google Music library.
@@ -401,6 +442,9 @@ def main():
 		filters = None
 
 	google_songs = get_google_songs(filters, cli['all'])
+	if cli['down']:
+		cli['input'] = get_local_download_path(google_songs)
+
 	local_songs, exclude_songs = get_local_songs()
 
 	if cli['down']:
