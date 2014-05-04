@@ -7,6 +7,21 @@ Usage
 
 During the first run of the scripts, you will be given a link to authorize the application with Google Music if necessary. Paste that link in your browser and click Allow. Enter the given code into the terminal prompt.
 
+## Output pattern replacements
+
+Pattern       | Field
+--------------|--------
+%artist%      | artist
+%title%       | title
+%track%       | tracknumber
+%track2%      | tracknumber (zero padded)
+%album%       | album
+%date%        | date
+%genre%       | genre
+%albumartist% | albumartist
+%disc%        | discnumber
+%suggested%   | Filename suggested by Google
+
 
 ## gmsync
 
@@ -98,25 +113,10 @@ output                 | Output file or directory name which can include templat
 
 \* *Filter fields can be any of artist, title, album, or album_artist*
 
-
-## Output pattern replacements
-
-Pattern       | Field
---------------|--------
-%artist%      | artist
-%title%       | title
-%track%       | tracknumber
-%track2%      | tracknumber (zero padded)
-%album%       | album
-%date%        | date
-%genre%       | genre
-%albumartist% | albumartist
-%disc%        | discnumber
-%suggested%   | Filename suggested by Google
-
 **Examples:**
 
 ```
 gmdownload.py -a -f 'artist:Muse' -f 'album:Black Holes' "/path/to/%artist%/%album%/%title%"
 gmdownload.py -f 'artist:Muse|Modest Mouse' "/path/to/%artist%/%album%/%title%"
 ```
+
