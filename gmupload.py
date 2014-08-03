@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 """
 An upload script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
@@ -27,180 +27,67 @@ Options:
 """
 
 from __future__ import print_function, unicode_literals
-from docopt import docopt
+
 import os
-import re
 import sys
 
-from gmusicapi import CallFailure
-from gmusicapi.clients import Musicmanager, OAUTH_FILEPATH
+from docopt import docopt
 
-FORMATS = ('.mp3', '.flac', '.ogg', '.m4a')
-
-
-def do_auth():
-	"""
-	Authenticate the mm client.
-	"""
-
-	oauth_file = os.path.join(os.path.dirname(OAUTH_FILEPATH), cli['cred'] + '.cred')
-
-	try:
-		if not mm.login(oauth_credentials=oauth_file, uploader_id=cli['uploader-id']):
-			try:
-				mm.perform_oauth(storage_filepath=oauth_file)
-			except:
-				print("\nUnable to login with specified oauth code.")
-
-			mm.login(oauth_credentials=oauth_file, uploader_id=cli['uploader-id'])
-	except (OSError, ValueError) as e:
-		print(e.args[0])
-		return False
-
-	if not mm.is_authenticated():
-		return False
-
-	_print("Successfully logged in.\n")
-
-	return True
-
-
-def do_upload(files, total):
-	"""
-	Upload the files and outputs the upload response with a counter.
-	"""
-
-	filenum = 0
-	errors = {}
-	pad = len(str(total))
-
-	for file in files:
-		filenum += 1
-
-		try:
-			_print("Uploading  {0}".format(file), end="\r")
-			sys.stdout.flush()
-			uploaded, matched, not_uploaded = mm.upload(file, transcode_quality="320k", enable_matching=cli['match'])
-		except CallFailure as e:
-			_print("({num:>{pad}}/{total}) Failed to upload  {file} | {error}".format(num=filenum, total=total, file=file, error=e, pad=pad).encode('utf8'))
-			errors[file] = e
-		else:
-			if uploaded:
-				_print("({num:>{pad}}/{total}) Successfully uploaded  {file}".format(num=filenum, total=total, file=file, pad=pad).encode('utf8'))
-			elif matched:
-				_print("({num:>{pad}}/{total}) Successfully scanned and matched  {file}".format(num=filenum, total=total, file=file, pad=pad).encode('utf8'))
-			else:
-				check_strings = ["ALREADY_EXISTS", "this song is already uploaded"]
-				if any(check_string in not_uploaded[file] for check_string in check_strings):
-					response = "ALREADY EXISTS"
-				else:
-					response = not_uploaded[file]
-				_print("({num:>{pad}}/{total}) Failed to upload  {file} | {response}".format(num=filenum, total=total, file=file, response=response, pad=pad).encode('utf8'))
-
-	if errors:
-		_print("\n\nThe following errors occurred:\n")
-		for file, e in errors.iteritems():
-			_print("{file} | {error}".format(file=file, error=e).encode('utf8'))
-		_print("\nThese files may need to be synced again.\n")
-
-
-def exclude_path(path):
-	"""
-	Exclude file paths based on user input.
-	"""
-
-	if excludes and excludes.search(path):
-		return True
-	else:
-		return False
-
-
-def get_file_list():
-	"""
-	Create a list of supported files from user input(s).
-	"""
-
-	files = []
-	exclude_files = []
-
-	for i in cli['input']:
-		i = i.decode('utf8')
-
-		if os.path.isfile(i) and i.lower().endswith(FORMATS):
-			if not exclude_path(os.path.abspath(i)):
-				files.append(i)
-			else:
-				exclude_files.append(i)
-
-		if os.path.isdir(i):
-			for dirpath, dirnames, filenames in os.walk(i):
-				for filename in filenames:
-					if filename.lower().endswith(FORMATS):
-						file = os.path.join(dirpath, filename)
-
-						if not exclude_path(os.path.abspath(file)):
-							files.append(file)
-						else:
-							exclude_files.append(file)
-
-	return files, exclude_files
+from gmwrapper import MusicManagerWrapper
+from utils import safe_print
 
 
 def main():
-	if not do_auth():
-		_print("\nSorry, login failed.")
-		sys.exit(0)
+	cli = dict((key.lstrip("-<").rstrip(">"), value) for key, value in docopt(__doc__).items())
 
-	_print("Loading local songs...")
-	files, exclude_files = get_file_list()
-	_print("Excluded {0} local songs".format(len(exclude_files)))
+	print_ = safe_print if not cli['quiet'] else lambda *args, **kwargs: None
 
-	# Sort list for sensible output.
-	files.sort()
-	exclude_files.sort()
+	if not cli['input']:
+		cli['input'] = [os.getcwd()]
 
-	total = len(files)
+	mmw = MusicManagerWrapper(log=cli['log'])
+	mmw.login()
+
+	excludes = "|".join(pattern.decode('utf8') for pattern in cli['exclude']) if cli['exclude'] else None
+
+	upload_songs, exclude_songs = mmw.get_local_songs(cli['input'], exclude_patterns=excludes)
+
+	upload_songs.sort()
+	exclude_songs.sort()
 
 	if cli['dry-run']:
-		_print("Found {0} songs".format(total))
+		print_("Found {0} songs to upload".format(len(upload_songs)))
 
-		if files:
-			_print("\nSongs to upload:\n")
-			for file in files:
-				print(file.encode('utf8'))
+		if upload_songs:
+			safe_print("\nSongs to upload:\n")
 
-		if exclude_files:
-			_print("\nSongs to exclude:\n")
-			for file in exclude_files:
-				print(file.encode('utf8'))
-	else:
-		if files:
-			_print("Uploading {0} songs to Google Music\n".format(total))
-			do_upload(files, total)
+			for song in upload_songs:
+				safe_print(song)
 		else:
-			_print("No songs to upload")
+			safe_print("\nNo songs to upload")
 
-	# Log out mm session when finished.
-	mm.logout()
-	_print("\nAll done!")
+		if exclude_songs:
+			safe_print("\nSongs to exclude:\n")
+
+			for song in exclude_songs:
+				safe_print(song)
+		else:
+			safe_print("\nNo songs to exclude")
+	else:
+		if upload_songs:
+			print_("Uploading {0} songs to Google Music\n".format(len(upload_songs)))
+
+			mmw.upload(upload_songs, enable_matching=cli['match'])
+		else:
+			safe_print("\nNo songs to upload")
+
+	mmw.logout()
+	print("\nAll done!")
 
 
 if __name__ == '__main__':
-	cli = docopt(__doc__)
-	cli = dict((key.lstrip("-<>").rstrip(">"), value) for key, value in cli.items())  # Remove superfluous characters from cli keys
-
-	if not cli['input']:
-		cli['input'] = ['.']
-
-	# Pre-compile regex for exclude option.
-	excludes = re.compile("|".join(pattern.decode('utf8') for pattern in cli['exclude'])) if cli['exclude'] else None
-
-	mm = Musicmanager(debug_logging=cli['log'])
-
-	_print = print if not cli['quiet'] else lambda *a, **k: None
-
 	try:
 		main()
 	except KeyboardInterrupt:
-		mm.logout()
 		print("\n\nExiting")
+		sys.exit()
