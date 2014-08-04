@@ -269,6 +269,7 @@ class MusicManagerWrapper(_Base):
 		self.print_("Loading Google Music songs...")
 
 		google_songs = []
+		filter_songs = []
 
 		songs = self.api.get_uploaded_songs()
 
@@ -280,7 +281,10 @@ class MusicManagerWrapper(_Base):
 		for song in songs:
 			if match_filters(song, filters, filter_all):
 				google_songs.append(song)
+			else:
+				filter_songs.append(song)
 
+		self.print_("Filtered {0} Google Music songs".format(len(filter_songs)))
 		self.print_("Loaded {0} Google Music songs\n".format(len(google_songs)))
 
 		return google_songs
