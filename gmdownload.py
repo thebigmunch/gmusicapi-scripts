@@ -48,7 +48,7 @@ def main():
 		cli['output'] = os.getcwd()
 
 	mmw = MusicManagerWrapper(log=cli['log'])
-	mmw.login()
+	mmw.login(oauth_file=cli['cred'], uploader_id=cli['uploader-id'])
 
 	download_songs = mmw.get_google_songs(filters=cli['filter'], filter_all=cli['all'])
 

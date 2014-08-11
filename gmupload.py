@@ -50,7 +50,7 @@ def main():
 		cli['input'] = [os.getcwd()]
 
 	mmw = MusicManagerWrapper(log=cli['log'])
-	mmw.login()
+	mmw.login(oauth_file=cli['cred'], uploader_id=cli['uploader-id'])
 
 	excludes = "|".join(pattern.decode('utf8') for pattern in cli['exclude']) if cli['exclude'] else None
 

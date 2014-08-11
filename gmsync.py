@@ -122,7 +122,7 @@ def main():
 	excludes = "|".join(pattern.decode('utf8') for pattern in cli['exclude']) if cli['exclude'] else None
 
 	mmw = MusicManagerWrapper(log=cli['log'], quiet=cli['quiet'])
-	mmw.login()
+	mmw.login(oauth_file=cli['cred'], uploader_id=cli['uploader-id'])
 
 	if cli['down']:
 		google_songs = mmw.get_google_songs(filters=cli['filter'], filter_all=cli['all'])
