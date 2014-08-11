@@ -33,7 +33,7 @@ Options:
                                  With -d,--dry-run will display song list.
   -e PATTERN, --exclude PATTERN  Exclude file paths matching a Python regex pattern.
                                  This option can be set multiple times.
-  -f FILTER, --filter FILTER     Filter Google songs by field:pattern pair (e.g. "artist:Muse").
+  -f FILTER, --filter FILTER     Filter Google songs (download) or local songs (upload) by field:pattern pair (e.g. "artist:Muse").
                                  Songs can match any filter criteria.
                                  This option can be set multiple times.
   -a, --all                      Songs must match all filter criteria.

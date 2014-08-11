@@ -24,7 +24,7 @@ Options:
                                  With -l,--log will display gmusicapi warnings.
                                  With -d,--dry-run will display song list.
   -e PATTERN, --exclude PATTERN  Exclude file paths matching a Python regex pattern.
-  -f FILTER, --filter FILTER     Filter Google songs by field:pattern pair (e.g. "artist:Muse").
+  -f FILTER, --filter FILTER     Filter local songs by field:pattern pair (e.g. "artist:Muse").
                                  Songs can match any filter criteria.
                                  This option can be set multiple times.
   -a, --all                      Songs must match all filter criteria.
