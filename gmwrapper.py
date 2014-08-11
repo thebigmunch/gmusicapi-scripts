@@ -188,7 +188,7 @@ def template_to_file_name(template, suggested_filename, metadata):
 
 
 class _Base(object):
-	def get_local_songs(self, paths, formats=SUPPORTED_FORMATS, exclude_patterns=None):
+	def get_local_songs(self, paths, formats=SUPPORTED_FORMATS, exclude_patterns=None, filters=None, filter_all=False):
 		"""Load songs from local file paths."""
 
 		if isinstance(paths, basestring):
@@ -196,10 +196,16 @@ class _Base(object):
 
 		assert isinstance(paths, list)
 
+		if filters:
+			filters = [
+				tuple(filter.split(':', 1)) for filter in filters if filter.split(':', 1)[0] in FILTER_FIELDS
+			]
+
 		self.print_("Loading local songs...")
 
 		local_songs = []
 		exclude_songs = []
+		filter_songs = []
 
 		for path in paths:
 			if not isinstance(path, unicode):
@@ -211,15 +217,27 @@ class _Base(object):
 						if filename.lower().endswith(formats):
 							filepath = os.path.join(dirpath, filename)
 
-							if not exclude_path(filepath, exclude_patterns):
+							song = _mutagen_fields_to_single_value(filepath)
+
+							if exclude_path(filepath, exclude_patterns):
+								exclude_songs.append(filepath)
+							elif match_filters(song, filters, filter_all):
 								local_songs.append(filepath)
 							else:
-								exclude_songs.append(filepath)
+								filter_songs.append(path)
+
 			elif os.path.isfile(path) and path.lower().endswith(formats):
+				song = _mutagen_fields_to_single_value(path)
+
 				if exclude_path(path, exclude_patterns):
 					exclude_songs.append(path)
+				elif match_filters(song, filters, filter_all):
+					local_songs.append(path)
+				else:
+					filter_songs.append(path)
 
 		self.print_("Excluded {0} local songs.".format(len(exclude_songs)))
+		self.print_("Filtered {0} local songs.".format(len(filter_songs)))
 		self.print_("Loaded {0} local songs.\n".format(len(local_songs)))
 
 		return local_songs, exclude_songs

@@ -6,9 +6,9 @@ More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
   gmsync.py (-h | --help)
-  gmsync.py up [-e PATTERN]... [options] [<input>]...
+  gmsync.py up [-e PATTERN]... [-f FILTER]... [options] [<input>]...
   gmsync.py down [-f FILTER]... [options] [<output>]
-  gmsync.py [-e PATTERN]... [options] [<input>]...
+  gmsync.py [-e PATTERN]... [-f FILTER]... [options] [<input>]...
 
 Commands:
   up                             Sync local songs to Google Music. Default behavior.
@@ -124,12 +124,11 @@ def main():
 	mmw = MusicManagerWrapper(log=cli['log'], quiet=cli['quiet'])
 	mmw.login()
 
-	google_songs = mmw.get_google_songs(cli['filter'], cli['all'])
-
 	if cli['down']:
-		cli['input'] = template_to_base_path(google_songs, cli['output'])
-
+		google_songs = mmw.get_google_songs(filters=cli['filter'], filter_all=cli['all'])
 		local_songs, exclude_songs = mmw.get_local_songs(cli['input'], exclude_patterns=excludes)
+
+		cli['input'] = template_to_base_path(google_songs, cli['output'])
 
 		print_("Scanning for missing songs...")
 		download_songs = compare_song_collections(google_songs, local_songs)
@@ -153,7 +152,8 @@ def main():
 			else:
 				safe_print("\nNo songs to download")
 	else:
-		local_songs, exclude_songs = mmw.get_local_songs(cli['input'], exclude_patterns=excludes)
+		google_songs = mmw.get_google_songs()
+		local_songs, exclude_songs = mmw.get_local_songs(cli['input'], exclude_patterns=excludes, filters=cli['filter'], filter_all=cli['all'])
 
 		print_("Scanning for missing songs...")
 

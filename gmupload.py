@@ -6,7 +6,7 @@ More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
   gmupload.py (-h | --help)
-  gmupload.py [-e PATTERN]... [options] [<input>]...
+  gmupload.py [-e PATTERN]... [-f FILTER]... [options] [<input>]...
 
 Arguments:
   input                          Files, directories, or glob patterns to upload.
@@ -24,6 +24,10 @@ Options:
                                  With -l,--log will display gmusicapi warnings.
                                  With -d,--dry-run will display song list.
   -e PATTERN, --exclude PATTERN  Exclude file paths matching a Python regex pattern.
+  -f FILTER, --filter FILTER     Filter Google songs by field:pattern pair (e.g. "artist:Muse").
+                                 Songs can match any filter criteria.
+                                 This option can be set multiple times.
+  -a, --all                      Songs must match all filter criteria.
 """
 
 from __future__ import print_function, unicode_literals
@@ -50,7 +54,7 @@ def main():
 
 	excludes = "|".join(pattern.decode('utf8') for pattern in cli['exclude']) if cli['exclude'] else None
 
-	upload_songs, exclude_songs = mmw.get_local_songs(cli['input'], exclude_patterns=excludes)
+	upload_songs, exclude_songs = mmw.get_local_songs(cli['input'], exclude_patterns=excludes, filters=cli['filter'], filter_all=cli['all'])
 
 	upload_songs.sort()
 	exclude_songs.sort()
