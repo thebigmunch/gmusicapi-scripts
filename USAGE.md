@@ -26,9 +26,9 @@ Pattern       | Field
 ## gmsync
 
 ```
-gmsync.py up [-e PATTERN]... [options] [<input>]...
+gmsync.py up [-e PATTERN]... [-f FILTER]... [options] [<input>]...
 gmsync.py down [-f FILTER]... [options] [<output>]
-gmsync.py [-e PATTERN]... [options] [<input>]...
+gmsync.py [-e PATTERN]... [-f FILTER]... [options] [<input>]...
 ```
 
 Supports **.mp3**, **.flac**, **.m4a**, **.ogg**  
@@ -44,10 +44,12 @@ Options                | Description
 -d, --dry-run          | Output list of songs that would be uploaded and excluded
 -q, --quiet            | Don't output status messages<br>With -l,--log will display gmusicapi warnings<br>With -d,--dry-run will display song list
 -e, -exclude           | Exclude file paths matching a Python regex pattern<br>This option can be set multiple times
--f, --filter           | Filter Google songs by field:value pair (e.g. "artist:Muse")*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-f, --filter           | Filter Google songs (download) or local songs (upload) by field:pattern pair (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
 -a, -all               | Songs must match all filter criteria<br>(Default: Songs can match any filter criteria)
 input                  | Files, directories, or glob patterns to upload<br>Defaults to current directory if omitted
 output                 | Output file or directory name which can include template patterns<br>Defaults to name suggested by Google Music in your current directory
+
+\* *Filter fields can be any of artist, title, album, or albumartist/album_artist*
 
 Commands | Description
 ---------|-------------
@@ -59,6 +61,7 @@ down     | Sync Google Music songs to local computer.
 ```
 gmsync.py -m "/path/to/music" "/other/path/to/music.mp3" "/another/path/to/*.flac"
 gmsync.py up -e 'MyFolderName' "/path/to/music"
+gmsync.py up -f 'artist:Muse' "/path/to/music" 
 gmsync.py down -a -f 'artist:Muse' -f 'album:Black Holes' "/path/to/%artist%/%album%/%title%"
 gmsync.py down -f 'artist:Muse|Modest Mouse' "/path/to/%artist%/%album%/%title%"
 ```
@@ -67,7 +70,7 @@ gmsync.py down -f 'artist:Muse|Modest Mouse' "/path/to/%artist%/%album%/%title%"
 ## gmupload
 
 ```
-gmupload.py [-e PATTERN]... [options] [<input>]...
+gmupload.py [-e PATTERN]... [-f FILTER]... [options] [<input>]...
 ```
 
 Supports **.mp3**, **.flac**, **.m4a**, **.ogg**  
@@ -83,13 +86,18 @@ Options                | Description
 -d, --dry-run          | Output list of songs that would be uploaded and excluded
 -q, --quiet            | Don't output status messages<br>With -l,--log will display gmusicapi warnings<br>With -d,--dry-run will display song list
 -e, -exclude           | Exclude file paths matching a Python regex pattern<br>This option can be set multiple times
+-f, --filter           | Filter local songs by field:pattern pair (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-a, -all               | Songs must match all filter criteria<br>(Default: Songs can match any filter criteria)
 input                  | Files, directories, or glob patterns to upload<br>Defaults to current directory if omitted
+
+\* *Filter fields can be any of artist, title, album, or albumartist/album_artist*
 
 **Examples:**
 
 ```
 gmupload.py "/path/to/music" "/other/path/to/music.mp3" "/another/path/to/*.flac"
-gmupload.py up -e 'MyFolderName' "/path/to/music"
+gmupload.py -e 'MyFolderName' "/path/to/music"
+gmupload.py -f 'artist:Muse' "/path/to/music" 
 ```
 
 
@@ -111,7 +119,7 @@ Options                | Description
 -a, -all               | Songs must match all filter criteria<br>(Default: Songs can match any filter criteria)
 output                 | Output file or directory name which can include template patterns<br>Defaults to name suggested by Google Music in your current directory
 
-\* *Filter fields can be any of artist, title, album, or album_artist*
+\* *Filter fields can be any of artist, title, album, or albumartist/album_artist*
 
 **Examples:**
 
