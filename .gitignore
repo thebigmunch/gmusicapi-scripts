@@ -33,3 +33,13 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+*.sublime-*
+
+# Music/playlist files
+*.mp3
+*.flac
+*.ogg
+*.m4a
+*.m3u
+*.m3u8
+*.pls
