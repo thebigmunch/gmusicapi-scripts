@@ -26,10 +26,6 @@ TEMPLATE_PATTERNS = {
 	'%genre%': 'genre', '%albumartist%': 'albumartist', '%disc%': 'discnumber'
 }
 
-FILTER_FIELDS = [
-	'artist', 'title', 'album', 'album_artist'
-]
-
 
 def _mutagen_fields_to_single_value(file):
 	"""Replace field list values in mutagen tags with the first list value."""
@@ -102,18 +98,83 @@ def filter_fields(song):
 	return [field for field in ['artist', 'album', 'title', 'tracknumber', 'track_number'] if field in song and song[field]]
 
 
-def match_filters(song, filters, filter_all):
-	"""Match a song against a set of metadata filters."""
+# Shamelessly taken from gmusicapi itself.
+def _get_valid_filter_fields():
+	shared_fields = ['artist', 'title', 'album']
+	diff_fields = {'albumartist': 'album_artist'}
 
-	if filters:
-		if filter_all:
-			if not all(re.search(value, song[field], re.I) for field, value in filters):
-				return False
-		else:
-			if not any(re.search(value, song[field], re.I) for field, value in filters):
-				return False
+	return dict(dict((shared, shared) for shared in shared_fields).items() + diff_fields.items())
+
+
+def _match_filters(song, filters, filter_all):
+	"""Match a song metadata dict against a set of metadata filters."""
+
+	if filter_all:
+		if not all(field in song and re.search(value, song[field], re.I) for field, value in filters):
+			return False
+	else:
+		if not any(field in song and re.search(value, song[field], re.I) for field, value in filters):
+			return False
 
 	return True
+
+
+def match_filters_google(songs, filters, filter_all):
+	"""Match a Google Music song against a set of metadata filters."""
+
+	match_songs = []
+	filter_songs = []
+
+	if filters:
+		split_filters = []
+
+		for filter in filters:
+			filter_field, filter_value = filter.split(':', 1)
+			valid_fields = _get_valid_filter_fields().items()
+
+			for mutagen_field, google_field in valid_fields:
+				if filter_field == mutagen_field or filter_field == google_field:
+					split_filters.append((google_field, filter_value))
+
+		for song in songs:
+			if _match_filters(song, split_filters, filter_all):
+				match_songs.append(song)
+			else:
+				filter_songs.append(song)
+	else:
+		match_songs += songs
+
+	return match_songs, filter_songs
+
+
+def match_filters_local(files, filters, filter_all):
+	"""Match a local file against a set of metadata filters."""
+
+	match_songs = []
+	filter_songs = []
+
+	if filters:
+		split_filters = []
+
+		for filter in filters:
+			filter_field, filter_value = filter.split(':', 1)
+			valid_fields = _get_valid_filter_fields().items()
+
+			for mutagen_field, google_field in valid_fields:
+				if filter_field == mutagen_field or filter_field == google_field:
+					split_filters.append((mutagen_field, filter_value))
+
+		for file in files:
+			song = _mutagen_fields_to_single_value(file)
+
+			if _match_filters(song, split_filters, filter_all):
+				match_songs.append(file)
+			else:
+				filter_songs.append(file)
+	else:
+		match_songs += files
+
+	return match_songs, filter_songs
 
 
 def normalize_metadata(metadata):
@@ -196,16 +257,10 @@ class _Base(object):
 
 		assert isinstance(paths, list)
 
-		if filters:
-			filters = [
-				tuple(filter.split(':', 1)) for filter in filters if filter.split(':', 1)[0] in FILTER_FIELDS
-			]
-
 		self.print_("Loading local songs...")
 
-		local_songs = []
+		include_songs = []
 		exclude_songs = []
-		filter_songs = []
 
 		for path in paths:
 			if not isinstance(path, unicode):
@@ -217,24 +272,18 @@ class _Base(object):
 						if filename.lower().endswith(formats):
 							filepath = os.path.join(dirpath, filename)
 
-							song = _mutagen_fields_to_single_value(filepath)
-
 							if exclude_path(filepath, exclude_patterns):
 								exclude_songs.append(filepath)
-							elif match_filters(song, filters, filter_all):
-								local_songs.append(filepath)
 							else:
-								filter_songs.append(path)
+								include_songs.append(filepath)
 
 			elif os.path.isfile(path) and path.lower().endswith(formats):
-				song = _mutagen_fields_to_single_value(path)
-
 				if exclude_path(path, exclude_patterns):
 					exclude_songs.append(path)
-				elif match_filters(song, filters, filter_all):
-					local_songs.append(path)
 				else:
-					filter_songs.append(path)
+					include_songs.append(path)
+
+		local_songs, filter_songs = match_filters_local(include_songs, filters, filter_all)
 
 		self.print_("Excluded {0} local songs.".format(len(exclude_songs)))
 		self.print_("Filtered {0} local songs.".format(len(filter_songs)))
@@ -291,16 +340,7 @@ class MusicManagerWrapper(_Base):
 
 		songs = self.api.get_uploaded_songs()
 
-		if filters:
-			filters = [
-				tuple(filter.split(':', 1)) for filter in filters if filter.split(':', 1)[0] in FILTER_FIELDS
-			]
-
-		for song in songs:
-			if match_filters(song, filters, filter_all):
-				google_songs.append(song)
-			else:
-				filter_songs.append(song)
+		google_songs, filter_songs = match_filters_google(songs, filters, filter_all)
 
 		self.print_("Filtered {0} Google Music songs".format(len(filter_songs)))
 		self.print_("Loaded {0} Google Music songs\n".format(len(google_songs)))
