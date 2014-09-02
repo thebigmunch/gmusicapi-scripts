@@ -40,6 +40,8 @@ def compare_song_collections(src_songs, dest_songs):
 	"""
 
 	missing_songs = []
+	src_songs_keyed = {}
+	dest_songs_keyed = {}
 
 	for src_song in src_songs:
 		if isinstance(src_song, dict):
@@ -47,15 +49,18 @@ def compare_song_collections(src_songs, dest_songs):
 		else:
 			src_key = create_song_key(_mutagen_fields_to_single_value(src_song))
 
-		for dest_song in dest_songs:
-			if isinstance(dest_song, dict):
-				dest_key = create_song_key(dest_song)
-			else:
-				dest_key = create_song_key(_mutagen_fields_to_single_value(dest_song))
+		src_songs_keyed[src_key] = src_song
 
-			if src_key == dest_key:
-				break
+	for dest_song in dest_songs:
+		if isinstance(dest_song, dict):
+			dest_key = create_song_key(dest_song)
 		else:
+			dest_key = create_song_key(_mutagen_fields_to_single_value(dest_song))
+
+		dest_songs_keyed[dest_key] = dest_song
+
+	for src_key, src_song in src_songs_keyed.iteritems():
+		if src_key not in dest_songs_keyed:
 			missing_songs.append(src_song)
 
 	return missing_songs
