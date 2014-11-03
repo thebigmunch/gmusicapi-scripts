@@ -1,5 +1,6 @@
 from __future__ import print_function, unicode_literals
 
+import getpass
 import logging
 import os
 import re
@@ -9,7 +10,7 @@ import tempfile
 
 import mutagen
 from gmusicapi import CallFailure
-from gmusicapi.clients import Musicmanager, OAUTH_FILEPATH
+from gmusicapi.clients import Mobileclient, Musicmanager, OAUTH_FILEPATH
 
 from utils import safe_print
 
@@ -44,19 +45,11 @@ def compare_song_collections(src_songs, dest_songs):
 	dest_songs_keyed = {}
 
 	for src_song in src_songs:
-		if isinstance(src_song, dict):
-			src_key = create_song_key(src_song)
-		else:
-			src_key = create_song_key(_mutagen_fields_to_single_value(src_song))
-
+		src_key = create_song_key(src_song)
 		src_songs_keyed[src_key] = src_song
 
 	for dest_song in dest_songs:
-		if isinstance(dest_song, dict):
-			dest_key = create_song_key(dest_song)
-		else:
-			dest_key = create_song_key(_mutagen_fields_to_single_value(dest_song))
-
+		dest_key = create_song_key(dest_song)
 		dest_songs_keyed[dest_key] = dest_song
 
 	for src_key, src_song in src_songs_keyed.iteritems():
@@ -70,6 +63,8 @@ def create_song_key(song):
 	"""Create dict key for song based on metadata."""
 
 	metadata = []
+
+	song = song if isinstance(song, dict) else _mutagen_fields_to_single_value(song)
 
 	# Replace track numbers with 0 if no tag exists.
 	if song.get('id'):
@@ -295,6 +290,64 @@ class _Base(object):
 		self.print_("Loaded {0} local songs.\n".format(len(local_songs)))
 
 		return local_songs, exclude_songs
+
+
+class MobileClientWrapper(_Base):
+	def __init__(self, log=False, quiet=False):
+		self.api = Mobileclient(debug_logging=log)
+		self.api.logger.addHandler(logging.NullHandler())
+
+		self.print_ = safe_print if not quiet else lambda *args, **kwargs: None
+
+	def login(self, *args):
+		"""Authenticate the gmusicapi Mobileclient instance."""
+
+		if len(args) == 2:
+			username, password = args[0], args[1]
+		elif len(args) == 1:
+			username, password = args[0], None
+		else:
+			username, password = None, None
+
+		if not self.api.login(username, password):
+			if not username:
+				username = raw_input("Enter your Google username or email address: ")
+
+			if not password:
+				password = getpass.getpass(b"Enter your Google Music password: ")
+
+			self.api.login(username, password)
+
+		if not self.api.is_authenticated():
+			self.print_("Sorry, login failed.")
+
+			return False
+
+		self.print_("Successfully logged in.\n")
+
+		return True
+
+	def logout(self):
+		"""Log out the gmusicapi Mobileclient instance."""
+
+		self.api.logout()
+
+	def get_google_songs(self, filters=None, filter_all=False):
+		"""Load song list from Google Music library."""
+
+		self.print_("Loading Google Music songs...")
+
+		google_songs = []
+		filter_songs = []
+
+		songs = self.api.get_all_songs()
+
+		google_songs, filter_songs = match_filters_google(songs, filters, filter_all)
+
+		self.print_("Filtered {0} Google Music songs".format(len(filter_songs)))
+		self.print_("Loaded {0} Google Music songs\n".format(len(google_songs)))
+
+		return google_songs
 
 
 class MusicManagerWrapper(_Base):
