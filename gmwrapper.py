@@ -11,6 +11,7 @@ import tempfile
 import mutagen
 from gmusicapi import CallFailure
 from gmusicapi.clients import Mobileclient, Musicmanager, OAUTH_FILEPATH
+from gmusicapi.utils import utils as gm_utils
 
 from utils import safe_print
 
@@ -249,13 +250,9 @@ def template_to_file_name(template, suggested_filename, metadata):
 
 
 class _Base(object):
+	@gm_utils.accept_singleton(basestring)
 	def get_local_songs(self, paths, formats=SUPPORTED_FORMATS, exclude_patterns=None, filters=None, filter_all=False):
 		"""Load songs from local file paths."""
-
-		if isinstance(paths, basestring):
-			paths = [paths]
-
-		assert isinstance(paths, list)
 
 		self.print_("Loading local songs...")
 
@@ -405,13 +402,9 @@ class MusicManagerWrapper(_Base):
 
 		return google_songs
 
+	@gm_utils.accept_singleton(basestring)
 	def download(self, songs, template):
 		"""Download songs from Google Music."""
-
-		if isinstance(songs, basestring):
-			songs = [songs]
-
-		assert isinstance(songs, list)
 
 		songnum = 0
 		total = len(songs)
@@ -449,13 +442,9 @@ class MusicManagerWrapper(_Base):
 				self.print_("{file} | {error}".format(file=filename, error=e))
 			self.print_("\nThese files may need to be synced again.\n")
 
+	@gm_utils.accept_singleton(basestring)
 	def upload(self, files, enable_matching=False):
 		"""Upload files to Google Music."""
-
-		if isinstance(files, basestring):
-			files = [files]
-
-		assert isinstance(files, list)
 
 		filenum = 0
 		total = len(files)
