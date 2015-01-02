@@ -96,7 +96,10 @@ def template_to_base_path(google_songs, template):
 		if drive:
 			filename = os.path.join(drive, os.sep, *parts)
 		else:
-			filename = os.path.join(*parts)
+			if os.path.isabs(template):
+				filename = os.path.join(os.sep, *parts)
+			else:
+				filename = os.path.join(*parts)
 
 		song_paths.append(filename)
 
@@ -126,9 +129,10 @@ def main():
 
 	if cli['down']:
 		google_songs = mmw.get_google_songs(filters=cli['filter'], filter_all=cli['all'])
-		local_songs, exclude_songs = mmw.get_local_songs(cli['input'], exclude_patterns=excludes)
 
 		cli['input'] = template_to_base_path(google_songs, cli['output'])
+
+		local_songs, exclude_songs = mmw.get_local_songs(cli['input'], exclude_patterns=excludes)
 
 		print_("Scanning for missing songs...")
 		download_songs = compare_song_collections(google_songs, local_songs)

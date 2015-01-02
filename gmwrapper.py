@@ -235,7 +235,10 @@ def template_to_file_name(template, suggested_filename, metadata):
 	if drive:
 		filename = os.path.join(drive, os.sep, *parts) + '.mp3'
 	else:
-		filename = os.path.join(*parts) + '.mp3'
+		if os.path.isabs(template):
+			filename = os.path.join(os.sep, *parts) + '.mp3'
+		else:
+			filename = os.path.join(*parts) + '.mp3'
 
 	dirname, __ = os.path.split(filename)
 
