@@ -41,6 +41,25 @@ Options                      | Description
 -y, --yes                    | Display results without asking for confirmation
 
 
+## gmdelete
+
+```
+gmdelete.py [options] [-f FILTER]...
+```
+
+Options                      | Description
+-----------------------------|--------------
+-h, --help                   | Show help message
+-u USERNAME, --user USERNAME | Your Google username or e-mail address
+-p PASSWORD, --pass PASSWORD | Your Google or app-specific password
+-l, --log                    | Enable gmusicapi logging
+-d, --dry-run                | Output list of songs that would be uploaded and excluded
+-q, --quiet                  | Don't output status messages<br>With -l,--log will display gmusicapi warnings
+-f, --filter                 | Filter Google songs by field:value pair (e.g. "artist:Muse")*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-a, -all                     | Songs must match all filter criteria<br>(Default: Songs can match any filter criteria)
+-y, --yes                    | Display results without asking for confirmation
+
+
 ## gmsync
 
 ```
