@@ -44,4 +44,4 @@ I've received some questions about donations. Donations, as any compliment, are 
 
 -----
 
-Copyright (c) 2014 [thebigmunch](mailto:mail@thebigmunch.me). Licensed under the MIT License. See [LICENSE](LICENSE).
+Copyright (c) 2015 [thebigmunch](mailto:mail@thebigmunch.me). Licensed under the MIT License. See [LICENSE](LICENSE).
