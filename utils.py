@@ -5,7 +5,7 @@ from __future__ import print_function, unicode_literals
 import sys
 
 
-def safe_print(msg, *args, **kwargs):
+def safe_print(msg="", *args, **kwargs):
 	"""Safely print strings containing unicode characters."""
 
 	try:
