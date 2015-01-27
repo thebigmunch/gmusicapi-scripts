@@ -25,7 +25,7 @@ CHARACTER_REPLACEMENTS = {
 TEMPLATE_PATTERNS = {
 	'%artist%': 'artist', '%title%': 'title', '%track%': 'tracknumber',
 	'%track2%': 'tracknumber', '%album%': 'album', '%date%': 'date',
-	'%genre%': 'genre', '%albumartist%': 'albumartist', '%disc%': 'discnumber'
+	'%genre%': 'genre', '%albumartist%': 'performer', '%disc%': 'discnumber'
 }
 
 
