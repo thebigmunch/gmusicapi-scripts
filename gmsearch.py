@@ -29,6 +29,7 @@ from docopt import docopt
 from gmwrapper import MobileClientWrapper
 from utils import safe_print
 
+
 def main():
 	cli = dict((key.lstrip("-<").rstrip(">"), value) for key, value in docopt(__doc__).items())
 
