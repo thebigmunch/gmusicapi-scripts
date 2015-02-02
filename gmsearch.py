@@ -6,7 +6,7 @@ More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
   gmsearch.py (-h | --help)
-  gmdsearch.py [options] [-f FILTER]...
+  gmsearch.py [options] [-f FILTER]...
 
 Options:
   -h, --help                         Display help message.
@@ -22,6 +22,8 @@ Options:
   -y, --yes                          Display results without asking for confirmation.
 """
 
+from __future__ import print_function, unicode_literals
+
 import sys
 
 from docopt import docopt
@@ -36,7 +38,7 @@ def main():
 	print_ = safe_print if not cli['quiet'] else lambda *args, **kwargs: None
 
 	mcw = MobileClientWrapper()
-	mcw.login(cli['username'], cli['password'])
+	mcw.login(cli['user'], cli['pass'])
 
 	print_("Scanning for songs...\n")
 	search_songs = mcw.get_google_songs(filters=cli['filter'], filter_all=cli['all'])

@@ -24,6 +24,8 @@ Options:
   -y, --yes                          Delete songs without asking for confirmation.
 """
 
+from __future__ import print_function, unicode_literals
+
 import sys
 
 from docopt import docopt
@@ -38,7 +40,7 @@ def main():
 	print_ = safe_print if not cli['quiet'] else lambda *args, **kwargs: None
 
 	mcw = MobileClientWrapper()
-	mcw.login(cli['username'], cli['password'])
+	mcw.login(cli['user'], cli['pass'])
 
 	delete_songs = mcw.get_google_songs(filters=cli['filter'], filter_all=cli['all'])
 
