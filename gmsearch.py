@@ -53,7 +53,7 @@ def main():
 				artist = song.get('artist', "<empty>")
 				album = song.get('album', "<empty>")
 
-				print("{0} by {1} from {2} ({3})".format(title, artist, album, song['id']))
+				print("{0} _by_ {1} _from_ {2} ({3})".format(title, artist, album, song['id']))
 
 			print_()
 	else:
