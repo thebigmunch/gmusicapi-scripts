@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 
 """
 A download script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
@@ -28,54 +29,8 @@ Options:
   -a, --all                     Songs must match all filter criteria.
 """
 
-from __future__ import print_function, unicode_literals
-
-import os
 import sys
 
-from docopt import docopt
+from gmusicapi_scripts.gmdownload import main
 
-from gmwrapper import MusicManagerWrapper
-from utils import safe_print
-
-
-def main():
-	cli = dict((key.lstrip("-<").rstrip(">"), value) for key, value in docopt(__doc__).items())
-
-	print_ = safe_print if not cli['quiet'] else lambda *args, **kwargs: None
-
-	if not cli['output']:
-		cli['output'] = os.getcwd()
-
-	mmw = MusicManagerWrapper(log=cli['log'])
-	mmw.login(oauth_file=cli['cred'], uploader_id=cli['uploader-id'])
-
-	download_songs = mmw.get_google_songs(filters=cli['filter'], filter_all=cli['all'])
-
-	download_songs.sort(key=lambda song: (song['artist'], song['album'], song['track_number']))
-
-	if cli['dry-run']:
-		print_("Found {0} songs to download".format(len(download_songs)))
-
-		if download_songs:
-			safe_print("\nSongs to download:\n")
-			for song in download_songs:
-				safe_print("{0} by {1}".format(song['title'], song['artist']))
-		else:
-			safe_print("\nNo songs to download")
-	else:
-		if download_songs:
-			print_("Downloading {0} songs from Google Music\n".format(len(download_songs)))
-			mmw.download(download_songs, cli['output'])
-		else:
-			safe_print("\nNo songs to download")
-
-	mmw.logout()
-	print_("\nAll done!")
-
-
-if __name__ == '__main__':
-	try:
-		main()
-	except KeyboardInterrupt:
-		sys.exit("\n\nExiting")
+sys.exit(main())

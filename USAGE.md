@@ -3,7 +3,7 @@ Usage
 
 ## General
 
-``script.py [options] [input/output]``
+``script [options] [input/output]``
 
 During the first run of the scripts, you will be given a link to authorize the application with Google Music if necessary. Paste that link in your browser and click Allow. Enter the given code into the terminal prompt.
 
@@ -26,7 +26,7 @@ Pattern       | Field
 ## gmsearch
 
 ```
-gmsearch.py [options] [-f FILTER]...
+gmsearch [options] [-f FILTER]...
 ```
 
 Options                      | Description
@@ -44,7 +44,7 @@ Options                      | Description
 ## gmdelete
 
 ```
-gmdelete.py [options] [-f FILTER]...
+gmdelete [options] [-f FILTER]...
 ```
 
 Options                      | Description
@@ -63,9 +63,9 @@ Options                      | Description
 ## gmsync
 
 ```
-gmsync.py up [-e PATTERN]... [-f FILTER]... [options] [<input>]...
-gmsync.py down [-f FILTER]... [options] [<output>]
-gmsync.py [-e PATTERN]... [-f FILTER]... [options] [<input>]...
+gmsync up [-e PATTERN]... [-f FILTER]... [options] [<input>]...
+gmsync down [-f FILTER]... [options] [<output>]
+gmsync [-e PATTERN]... [-f FILTER]... [options] [<input>]...
 ```
 
 Supports **.mp3**, **.flac**, **.m4a**, **.ogg**  
@@ -96,18 +96,18 @@ down     | Sync Google Music songs to local computer.
 **Examples:**
 
 ```
-gmsync.py -m "/path/to/music" "/other/path/to/music.mp3" "/another/path/to/*.flac"
-gmsync.py up -e 'MyFolderName' "/path/to/music"
-gmsync.py up -f 'artist:Muse' "/path/to/music" 
-gmsync.py down -a -f 'artist:Muse' -f 'album:Black Holes' "/path/to/%artist%/%album%/%title%"
-gmsync.py down -f 'artist:Muse|Modest Mouse' "/path/to/%artist%/%album%/%title%"
+gmsync -m "/path/to/music" "/other/path/to/music.mp3" "/another/path/to/*.flac"
+gmsync up -e 'MyFolderName' "/path/to/music"
+gmsync up -f 'artist:Muse' "/path/to/music" 
+gmsync down -a -f 'artist:Muse' -f 'album:Black Holes' "/path/to/%artist%/%album%/%title%"
+gmsync down -f 'artist:Muse|Modest Mouse' "/path/to/%artist%/%album%/%title%"
 ```
 
 
 ## gmupload
 
 ```
-gmupload.py [-e PATTERN]... [-f FILTER]... [options] [<input>]...
+gmupload [-e PATTERN]... [-f FILTER]... [options] [<input>]...
 ```
 
 Supports **.mp3**, **.flac**, **.m4a**, **.ogg**  
@@ -132,16 +132,16 @@ input                  | Files, directories, or glob patterns to upload<br>Defau
 **Examples:**
 
 ```
-gmupload.py "/path/to/music" "/other/path/to/music.mp3" "/another/path/to/*.flac"
-gmupload.py -e 'MyFolderName' "/path/to/music"
-gmupload.py -f 'artist:Muse' "/path/to/music" 
+gmupload "/path/to/music" "/other/path/to/music.mp3" "/another/path/to/*.flac"
+gmupload -e 'MyFolderName' "/path/to/music"
+gmupload -f 'artist:Muse' "/path/to/music" 
 ```
 
 
 ## gmdownload
 
 ```
-gmdownload.py [-f FILTER]... [options] [<output>]
+gmdownload [-f FILTER]... [options] [<output>]
 ```
 
 Options                | Description
@@ -161,7 +161,7 @@ output                 | Output file or directory name which can include templat
 **Examples:**
 
 ```
-gmdownload.py -a -f 'artist:Muse' -f 'album:Black Holes' "/path/to/%artist%/%album%/%title%"
-gmdownload.py -f 'artist:Muse|Modest Mouse' "/path/to/%artist%/%album%/%title%"
+gmdownload -a -f 'artist:Muse' -f 'album:Black Holes' "/path/to/%artist%/%album%/%title%"
+gmdownload -f 'artist:Muse|Modest Mouse' "/path/to/%artist%/%album%/%title%"
 ```
 

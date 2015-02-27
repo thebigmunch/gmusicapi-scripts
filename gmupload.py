@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 
 """
 An upload script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
@@ -30,67 +31,8 @@ Options:
   -a, --all                      Songs must match all filter criteria.
 """
 
-from __future__ import print_function, unicode_literals
-
-import os
 import sys
 
-from docopt import docopt
+from gmusicapi_scripts.gmupload import main
 
-from gmwrapper import MusicManagerWrapper
-from utils import safe_print
-
-
-def main():
-	cli = dict((key.lstrip("-<").rstrip(">"), value) for key, value in docopt(__doc__).items())
-
-	print_ = safe_print if not cli['quiet'] else lambda *args, **kwargs: None
-
-	if not cli['input']:
-		cli['input'] = [os.getcwd()]
-
-	mmw = MusicManagerWrapper(log=cli['log'])
-	mmw.login(oauth_file=cli['cred'], uploader_id=cli['uploader-id'])
-
-	excludes = "|".join(pattern.decode('utf8') for pattern in cli['exclude']) if cli['exclude'] else None
-
-	upload_songs, exclude_songs = mmw.get_local_songs(cli['input'], exclude_patterns=excludes, filters=cli['filter'], filter_all=cli['all'])
-
-	upload_songs.sort()
-	exclude_songs.sort()
-
-	if cli['dry-run']:
-		print_("Found {0} songs to upload".format(len(upload_songs)))
-
-		if upload_songs:
-			safe_print("\nSongs to upload:\n")
-
-			for song in upload_songs:
-				safe_print(song)
-		else:
-			safe_print("\nNo songs to upload")
-
-		if exclude_songs:
-			safe_print("\nSongs to exclude:\n")
-
-			for song in exclude_songs:
-				safe_print(song)
-		else:
-			safe_print("\nNo songs to exclude")
-	else:
-		if upload_songs:
-			print_("Uploading {0} songs to Google Music\n".format(len(upload_songs)))
-
-			mmw.upload(upload_songs, enable_matching=cli['match'])
-		else:
-			safe_print("\nNo songs to upload")
-
-	mmw.logout()
-	print("\nAll done!")
-
-
-if __name__ == '__main__':
-	try:
-		main()
-	except KeyboardInterrupt:
-		sys.exit("\n\nExiting")
+sys.exit(main())
