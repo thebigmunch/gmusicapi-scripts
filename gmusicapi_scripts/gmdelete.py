@@ -54,15 +54,15 @@ def main():
 
 	filters = [tuple(filt.split(':', 1)) for filt in cli['filter']]
 
-	delete_songs, _ = mcw.get_google_songs(filters=filters, filter_all=cli['all'])
+	songs_to_delete, _ = mcw.get_google_songs(include_filters=filters, all_include_filters=cli['all'])
 
 	if cli['dry-run']:
-		logger.info("Found {0} songs to delete".format(len(delete_songs)))
+		logger.info("Found {0} songs to delete".format(len(songs_to_delete)))
 
-		if delete_songs:
+		if songs_to_delete:
 			logger.info("\nSongs to delete:\n")
 
-			for song in delete_songs:
+			for song in songs_to_delete:
 				title = song.get('title', "<empty>")
 				artist = song.get('artist', "<empty>")
 				album = song.get('album', "<empty>")
@@ -72,17 +72,18 @@ def main():
 		else:
 			logger.info("\nNo songs to delete")
 	else:
-		if delete_songs:
+		if songs_to_delete:
 			confirm = cli['yes'] or cli['quiet']
+			logger.info("")
 
-			if confirm or raw_input("Are you sure you want to delete {0} song(s) from Google Music? (y/n) ".format(len(delete_songs))) in ("y", "Y"):
-				logger.info("\nDeleting {0} songs from Google Music\n".format(len(delete_songs)))
+			if confirm or raw_input("Are you sure you want to delete {0} song(s) from Google Music? (y/n) ".format(len(songs_to_delete))) in ("y", "Y"):
+				logger.info("\nDeleting {0} songs from Google Music\n".format(len(songs_to_delete)))
 
 				songnum = 0
-				total = len(delete_songs)
+				total = len(songs_to_delete)
 				pad = len(str(total))
 
-				for song in delete_songs:
+				for song in songs_to_delete:
 					mcw.api.delete_songs(song['id'])
 					songnum += 1
 

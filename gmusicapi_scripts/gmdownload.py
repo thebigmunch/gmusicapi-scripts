@@ -62,17 +62,17 @@ def main():
 
 	filters = [tuple(filt.split(':', 1)) for filt in cli['filter']]
 
-	download_songs, _ = mmw.get_google_songs(filters=filters, filter_all=cli['all'])
+	songs_to_download, _ = mmw.get_google_songs(include_filters=filters, all_include_filters=cli['all'])
 
-	download_songs.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
+	songs_to_download.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
 
 	if cli['dry-run']:
-		logger.info("Found {0} song(s) to download".format(len(download_songs)))
+		logger.info("\nFound {0} song(s) to download".format(len(songs_to_download)))
 
-		if download_songs:
+		if songs_to_download:
 			logger.info("\nSongs to download:\n")
 
-			for song in download_songs:
+			for song in songs_to_download:
 				title = song.get('title', "<empty>")
 				artist = song.get('artist', "<empty>")
 				album = song.get('album', "<empty>")
@@ -82,9 +82,9 @@ def main():
 		else:
 			logger.info("\nNo songs to download")
 	else:
-		if download_songs:
-			logger.info("Downloading {0} song(s) from Google Music\n".format(len(download_songs)))
-			mmw.download(download_songs, cli['output'])
+		if songs_to_download:
+			logger.info("\nDownloading {0} song(s) from Google Music\n".format(len(songs_to_download)))
+			mmw.download(songs_to_download, cli['output'])
 		else:
 			logger.info("\nNo songs to download")
 

@@ -66,34 +66,36 @@ def main():
 
 	excludes = "|".join(pattern.decode('utf8') for pattern in cli['exclude']) if cli['exclude'] else None
 
-	upload_songs, _, exclude_songs = mmw.get_local_songs(cli['input'], filters=filters, filter_all=cli['all'], exclude_patterns=excludes)
+	songs_to_upload, _, songs_to_exclude = mmw.get_local_songs(
+		cli['input'], filepath_exclude_patterns=excludes, include_filters=filters, all_include_filters=cli['all']
+	)
 
-	upload_songs.sort()
-	exclude_songs.sort()
+	songs_to_upload.sort()
+	songs_to_exclude.sort()
 
 	if cli['dry-run']:
-		logger.info("Found {0} song(s) to upload".format(len(upload_songs)))
+		logger.info("\nFound {0} song(s) to upload".format(len(songs_to_upload)))
 
-		if upload_songs:
+		if songs_to_upload:
 			logger.info("\nSongs to upload:\n")
 
-			for song in upload_songs:
+			for song in songs_to_upload:
 				logger.log(QUIET, song)
 		else:
 			logger.info("\nNo songs to upload")
 
-		if exclude_songs:
+		if songs_to_exclude:
 			logger.info("\nSongs to exclude:\n")
 
-			for song in exclude_songs:
+			for song in songs_to_exclude:
 				logger.log(QUIET, song)
 		else:
 			logger.info("\nNo songs to exclude")
 	else:
-		if upload_songs:
-			logger.info("Uploading {0} song(s) to Google Music\n".format(len(upload_songs)))
+		if songs_to_upload:
+			logger.info("\nUploading {0} song(s) to Google Music\n".format(len(songs_to_upload)))
 
-			mmw.upload(upload_songs, enable_matching=cli['match'])
+			mmw.upload(songs_to_upload, enable_matching=cli['match'])
 		else:
 			logger.info("\nNo songs to upload")
 

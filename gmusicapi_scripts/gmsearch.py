@@ -53,24 +53,23 @@ def main():
 	filters = [tuple(filt.split(':', 1)) for filt in cli['filter']]
 
 	logger.info("Scanning for songs...\n")
-	search_songs, _ = mcw.get_google_songs(filters=filters, filter_all=cli['all'])
-	search_songs.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
+	search_results, _ = mcw.get_google_songs(include_filters=filters, all_include_filters=cli['all'])
+	search_results.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
 
-	if search_songs:
+	if search_results:
 		confirm = cli['yes'] or cli['quiet']
+		logger.info("")
 
-		if confirm or raw_input("Display {} results? (y/n) ".format(len(search_songs))) in ("y", "Y"):
+		if confirm or raw_input("Display {} results? (y/n) ".format(len(search_results))) in ("y", "Y"):
 			logger.log(QUIET, "")
 
-			print(search_songs)
-
-			for song in search_songs:
+			for song in search_results:
 				title = song.get('title', "<empty>")
 				artist = song.get('artist', "<empty>")
 				album = song.get('album', "<empty>")
 				song_id = song['id']
 
-#				logger.log(QUIET, "{0} -- {1} -- {2} ({3})".format(title, artist, album, song_id))
+				logger.log(QUIET, "{0} -- {1} -- {2} ({3})".format(title, artist, album, song_id))
 	else:
 		logger.info("No songs found matching query\n")
 

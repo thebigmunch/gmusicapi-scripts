@@ -63,11 +63,14 @@ def template_to_base_path(template, google_songs):
 
 	song_paths = []
 
-	for song in google_songs:
-		song_paths.append(template_to_file_name(template, song))
+	if template == os.getcwd():
+		local_path = [template]
+	else:
+		for song in google_songs:
+			song_paths.append(template_to_file_name(template, song))
 
-	common_path = os.path.commonprefix(song_paths)
-	local_path = [common_path] if common_path else [os.getcwd()]
+		common_base_path = os.path.commonprefix(song_paths)
+		local_path = [common_base_path]
 
 	return local_path
 
@@ -95,25 +98,26 @@ def main():
 	mmw.login(oauth_filename=cli['cred'], uploader_id=cli['uploader-id'])
 
 	if cli['down']:
-		google_songs, _ = mmw.get_google_songs(filters=filters, filter_all=cli['all'])
+		matched_google_songs, _ = mmw.get_google_songs(include_filters=filters, all_include_filters=cli['all'])
 
-		cli['input'] = template_to_base_path(cli['output'], google_songs)
+		logger.info("")
 
-		local_songs, _, _ = mmw.get_local_songs(cli['input'], exclude_patterns=excludes)
-		print(cli['input'])
+		cli['input'] = template_to_base_path(cli['output'], matched_google_songs)
 
-		logger.info("Scanning for missing songs...")
-		download_songs = compare_song_collections(google_songs, local_songs)
+		matched_local_songs, _, _ = mmw.get_local_songs(cli['input'], filepath_exclude_patterns=excludes)
 
-		download_songs.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
+		logger.info("\nScanning for missing songs...")
+		songs_to_download = compare_song_collections(matched_google_songs, matched_local_songs)
+
+		songs_to_download.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
 
 		if cli['dry-run']:
-			logger.info("Found {0} song(s) to download".format(len(download_songs)))
+			logger.info("\nFound {0} song(s) to download".format(len(songs_to_download)))
 
-			if download_songs:
+			if songs_to_download:
 				logger.info("\nSongs to download:\n")
 
-				for song in download_songs:
+				for song in songs_to_download:
 					title = song.get('title', "<empty>")
 					artist = song.get('artist', "<empty>")
 					album = song.get('album', "<empty>")
@@ -123,48 +127,53 @@ def main():
 			else:
 				logger.info("\nNo songs to download")
 		else:
-			if download_songs:
-				logger.info("Downloading {0} song(s) from Google Music\n".format(len(download_songs)))
-				mmw.download(download_songs, cli['output'])
+			if songs_to_download:
+				logger.info("\nDownloading {0} song(s) from Google Music\n".format(len(songs_to_download)))
+				mmw.download(songs_to_download, cli['output'])
 			else:
 				logger.info("\nNo songs to download")
 	else:
-		google_songs, _ = mmw.get_google_songs()
-		local_songs, _, exclude_songs = mmw.get_local_songs(cli['input'], filters=filters, filter_all=cli['all'], exclude_patterns=excludes)
+		matched_google_songs, _ = mmw.get_google_songs()
 
-		logger.info("Scanning for missing songs...")
+		logger.info("")
 
-		upload_songs = compare_song_collections(local_songs, google_songs)
+		matched_local_songs, _, songs_to_exclude = mmw.get_local_songs(
+			cli['input'], filepath_exclude_patterns=excludes, include_filters=filters, all_include_filters=cli['all']
+		)
+
+		logger.info("\nScanning for missing songs...")
+
+		songs_to_upload = compare_song_collections(matched_local_songs, matched_google_songs)
 
 		# Sort lists for sensible output.
-		upload_songs.sort()
-		exclude_songs.sort()
+		songs_to_upload.sort()
+		songs_to_exclude.sort()
 
 		if cli['dry-run']:
-			logger.info("Found {0} song(s) to upload".format(len(upload_songs)))
+			logger.info("\nFound {0} song(s) to upload".format(len(songs_to_upload)))
 
-			if upload_songs:
+			if songs_to_upload:
 				logger.info("\nSongs to upload:\n")
 
-				for song in upload_songs:
+				for song in songs_to_upload:
 					logger.log(QUIET, song)
 			else:
 				logger.info("\nNo songs to upload")
 
-			if exclude_songs:
+			if songs_to_exclude:
 				logger.info("\nSongs to exclude:\n")
 
-				for song in exclude_songs:
+				for song in songs_to_exclude:
 					logger.log(QUIET, song)
 			else:
 				logger.info("\nNo songs to exclude")
 		else:
-			if upload_songs:
-				logger.info("Uploading {0} song(s) to Google Music\n".format(len(upload_songs)))
+			if songs_to_upload:
+				logger.info("\nUploading {0} song(s) to Google Music\n".format(len(songs_to_upload)))
 
-				mmw.upload(upload_songs, enable_matching=cli['match'])
+				mmw.upload(songs_to_upload, enable_matching=cli['match'])
 			else:
-				logger.info("No songs to upload")
+				logger.info("\nNo songs to upload")
 
 	mmw.logout()
 	logger.info("\nAll done!")
