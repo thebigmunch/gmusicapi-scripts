@@ -7,9 +7,9 @@ More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
   gmsync.py (-h | --help)
-  gmsync.py up [-e PATTERN]... [-f FILTER]... [options] [<input>]...
-  gmsync.py down [-f FILTER]... [options] [<output>]
-  gmsync.py [-e PATTERN]... [-f FILTER]... [options] [<input>]...
+  gmsync.py up [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
+  gmsync.py down [-f FILTER]... [-F FILTER]... [options] [<output>]
+  gmsync.py [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
 
 Commands:
   up                             Sync local songs to Google Music. Default behavior.
@@ -22,22 +22,30 @@ Arguments:
                                  Defaults to name suggested by Google Music in your current directory.
 
 Options:
-  -h, --help                     Display help message.
-  -c CRED, --cred CRED           Specify oauth credential file name to use/create. [Default: oauth]
-  -U ID --uploader-id ID         A unique id given as a MAC address (e.g. '00:11:22:33:AA:BB').
-                                 This should only be provided when the default does not work.
-  -l, --log                      Enable gmusicapi logging.
-  -m, --match                    Enable scan and match.
-  -d, --dry-run                  Output list of songs that would be uploaded.
-  -q, --quiet                    Don't output status messages.
-                                 With -l,--log will display gmusicapi warnings.
-                                 With -d,--dry-run will display song list.
-  -e PATTERN, --exclude PATTERN  Exclude file paths matching a Python regex pattern.
-                                 This option can be set multiple times.
-  -f FILTER, --filter FILTER     Filter Google songs (download) or local songs (upload) by field:pattern pair (e.g. "artist:Muse").
-                                 Songs can match any filter criteria.
-                                 This option can be set multiple times.
-  -a, --all                      Songs must match all filter criteria.
+  -h, --help                            Display help message.
+  -c CRED, --cred CRED                  Specify oauth credential file name to use/create. [Default: oauth]
+  -U ID --uploader-id ID                A unique id given as a MAC address (e.g. '00:11:22:33:AA:BB').
+                                        This should only be provided when the default does not work.
+  -l, --log                             Enable gmusicapi logging.
+  -m, --match                           Enable scan and match.
+  -d, --dry-run                         Output list of songs that would be uploaded.
+  -q, --quiet                           Don't output status messages.
+                                        With -l,--log will display gmusicapi warnings.
+                                        With -d,--dry-run will display song list.
+  -e PATTERN, --exclude PATTERN         Exclude file paths matching pattern.
+                                        This option can be set multiple times.
+  -f FILTER, --include-filter FILTER    Include Google songs (download) or local songs (upload)
+                                        by field:pattern filter (e.g. "artist:Muse").
+                                        Songs can match any filter criteria.
+                                        This option can be set multiple times.
+  -F FILTER, --exclude-filter FILTER    Exclude Google songs (download) or local songs (upload)
+                                        by field:pattern filter (e.g. "artist:Muse").
+                                        Songs can match any filter criteria.
+                                        This option can be set multiple times.
+  -a, --include-all                     Songs must match all include filter criteria to be included.
+  -A, --exclude-all                     Songs must match all exclude filter criteria to be excluded.
+
+Patterns can be any valid Python regex patterns.
 """
 
 from __future__ import unicode_literals
@@ -89,22 +97,22 @@ def main():
 	if not cli['output']:
 		cli['output'] = os.getcwd()
 
-	filters = [tuple(filt.split(':', 1)) for filt in cli['filter']]
+	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
+	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
-	# Pre-compile regex for exclude option.
-	excludes = "|".join(pattern.decode('utf8') for pattern in cli['exclude']) if cli['exclude'] else None
+	filepath_exclude_patterns = "|".join(pattern.decode('utf8') for pattern in cli['exclude']) if cli['exclude'] else None
 
 	mmw = MusicManagerWrapper(log=cli['log'])
 	mmw.login(oauth_filename=cli['cred'], uploader_id=cli['uploader-id'])
 
 	if cli['down']:
-		matched_google_songs, _ = mmw.get_google_songs(include_filters=filters, all_include_filters=cli['all'])
+		matched_google_songs, _ = mmw.get_google_songs(include_filters, exclude_filters, cli['include-all'], cli['exclude-all'])
 
 		logger.info("")
 
 		cli['input'] = template_to_base_path(cli['output'], matched_google_songs)
 
-		matched_local_songs, _, _ = mmw.get_local_songs(cli['input'], filepath_exclude_patterns=excludes)
+		matched_local_songs, _, _ = mmw.get_local_songs(cli['input'], filepath_exclude_patterns=filepath_exclude_patterns)
 
 		logger.info("\nScanning for missing songs...")
 		songs_to_download = compare_song_collections(matched_google_songs, matched_local_songs)
@@ -138,7 +146,7 @@ def main():
 		logger.info("")
 
 		matched_local_songs, _, songs_to_exclude = mmw.get_local_songs(
-			cli['input'], filepath_exclude_patterns=excludes, include_filters=filters, all_include_filters=cli['all']
+			cli['input'], include_filters, exclude_filters, cli['include-all'], cli['exclude-all'], filepath_exclude_patterns
 		)
 
 		logger.info("\nScanning for missing songs...")

@@ -22,11 +22,11 @@ Pattern       | Field
 %disc%        | discnumber
 %suggested%   | Filename suggested by Google
 
-
 ## gmsearch
 
 ```
-gmsearch [options] [-f FILTER]...
+gmsearch.py (-h | --help)
+gmsearch.py [options] [-f FILTER]... [-F FILTER]...
 ```
 
 Options                      | Description
@@ -36,15 +36,18 @@ Options                      | Description
 -p PASSWORD, --pass PASSWORD | Your Google or app-specific password
 -l, --log                    | Enable gmusicapi logging
 -q, --quiet                  | Don't output status messages<br>With -l,--log will display gmusicapi warnings
--f, --filter                 | Filter Google songs by field:value pair (e.g. "artist:Muse")*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
--a, -all                     | Songs must match all filter criteria<br>(Default: Songs can match any filter criteria)
+-f, --include-filter         | Include Google songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-F, --exclude-filter         | Exclude Google songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-a, -include-                | Songs must match all include filter criteria
+-A, -exclude-all             | Songs must match all exclude filter criteria
 -y, --yes                    | Display results without asking for confirmation
 
 
 ## gmdelete
 
 ```
-gmdelete [options] [-f FILTER]...
+gmdelete.py (-h | --help)
+gmdelete.py [options] [-f FILTER]... [-F FILTER]...
 ```
 
 Options                      | Description
@@ -55,17 +58,20 @@ Options                      | Description
 -l, --log                    | Enable gmusicapi logging
 -d, --dry-run                | Output list of songs that would be uploaded and excluded
 -q, --quiet                  | Don't output status messages<br>With -l,--log will display gmusicapi warnings
--f, --filter                 | Filter Google songs by field:value pair (e.g. "artist:Muse")*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
--a, -all                     | Songs must match all filter criteria<br>(Default: Songs can match any filter criteria)
+-f, --include-filter         | Include Google songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-F, --exclude-filter         | Exclude Google songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-a, -include-                | Songs must match all include filter criteria
+-A, -exclude-all             | Songs must match all exclude filter criteria
 -y, --yes                    | Display results without asking for confirmation
 
 
 ## gmsync
 
 ```
-gmsync up [-e PATTERN]... [-f FILTER]... [options] [<input>]...
-gmsync down [-f FILTER]... [options] [<output>]
-gmsync [-e PATTERN]... [-f FILTER]... [options] [<input>]...
+gmsync.py (-h | --help)
+gmsync.py up [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
+gmsync.py down [-f FILTER]... [-F FILTER]... [options] [<output>]
+gmsync.py [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
 ```
 
 Supports **.mp3**, **.flac**, **.m4a**, **.ogg**  
@@ -81,8 +87,10 @@ Options                | Description
 -d, --dry-run          | Output list of songs that would be uploaded and excluded
 -q, --quiet            | Don't output status messages<br>With -l,--log will display gmusicapi warnings<br>With -d,--dry-run will display song list
 -e, -exclude           | Exclude file paths matching a Python regex pattern<br>This option can be set multiple times
--f, --filter           | Filter Google songs (download) or local songs (upload) by field:pattern pair (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
--a, -all               | Songs must match all filter criteria<br>(Default: Songs can match any filter criteria)
+-f, --include-filter   | Include Google songs (download) or local songs (upload) by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-F, --exclude-filter   | Exclude Google songs (download) or local songs (upload) by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-a, -include-          | Songs must match all include filter criteria
+-A, -exclude-all       | Songs must match all exclude filter criteria
 input                  | Files, directories, or glob patterns to upload<br>Defaults to current directory if omitted
 output                 | Output file or directory name which can include template patterns<br>Defaults to name suggested by Google Music in your current directory
 
@@ -107,7 +115,8 @@ gmsync down -f 'artist:Muse|Modest Mouse' "/path/to/%artist%/%album%/%title%"
 ## gmupload
 
 ```
-gmupload [-e PATTERN]... [-f FILTER]... [options] [<input>]...
+gmupload.py (-h | --help)
+gmupload.py [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
 ```
 
 Supports **.mp3**, **.flac**, **.m4a**, **.ogg**  
@@ -123,8 +132,10 @@ Options                | Description
 -d, --dry-run          | Output list of songs that would be uploaded and excluded
 -q, --quiet            | Don't output status messages<br>With -l,--log will display gmusicapi warnings<br>With -d,--dry-run will display song list
 -e, -exclude           | Exclude file paths matching a Python regex pattern<br>This option can be set multiple times
--f, --filter           | Filter local songs by field:pattern pair (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
--a, -all               | Songs must match all filter criteria<br>(Default: Songs can match any filter criteria)
+-f, --include-filter   | Include local songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-F, --exclude-filter   | Exclude local songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-a, -include-          | Songs must match all include filter criteria
+-A, -exclude-all       | Songs must match all exclude filter criteria
 input                  | Files, directories, or glob patterns to upload<br>Defaults to current directory if omitted
 
 \* *Filter fields can be any of artist, title, album, or albumartist/album_artist*
@@ -141,7 +152,8 @@ gmupload -f 'artist:Muse' "/path/to/music"
 ## gmdownload
 
 ```
-gmdownload [-f FILTER]... [options] [<output>]
+gmdownload.py (-h | --help)
+gmdownload.py [-f FILTER]... [-F FILTER]... [options] [<output>
 ```
 
 Options                | Description
@@ -152,8 +164,10 @@ Options                | Description
 -l, --log              | Enable gmusicapi logging
 -d, --dry-run          | Output list of songs that would be uploaded and excluded
 -q, --quiet            | Don't output status messages<br>With -l,--log will display gmusicapi warnings<br>With -d,--dry-run will display song list
--f, --filter           | Filter Google songs by field:value pair (e.g. "artist:Muse")*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
--a, -all               | Songs must match all filter criteria<br>(Default: Songs can match any filter criteria)
+-f, --include-filter   | Include Google songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-F, --exclude-filter   | Exclude Google songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
+-a, -include-          | Songs must match all include filter criteria
+-A, -exclude-all       | Songs must match all exclude filter criteria
 output                 | Output file or directory name which can include template patterns<br>Defaults to name suggested by Google Music in your current directory
 
 \* *Filter fields can be any of artist, title, album, or albumartist/album_artist*

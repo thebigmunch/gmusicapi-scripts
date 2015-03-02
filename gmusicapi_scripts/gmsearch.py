@@ -7,20 +7,26 @@ More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
   gmsearch.py (-h | --help)
-  gmsearch.py [options] [-f FILTER]...
+  gmsearch.py [options] [-f FILTER]... [-F FILTER]...
 
 Options:
-  -h, --help                         Display help message.
-  -u USERNAME, --user USERNAME       Your Google username or e-mail address.
-  -p PASSWORD, --pass PASSWORD       Your Google or app-specific password.
-  -l, --log                          Enable gmusicapi logging.
-  -q, --quiet                        Don't output status messages.
-                                     With -l,--log will display gmusicapi warnings.
-  -f FILTER, --filter FILTER         Filter Google songs by field:pattern pair (e.g. "artist:Muse").
-                                     Songs can match any filter criteria.
-                                     This option can be set multiple times.
-  -a, --all                          Songs must match all filter criteria.
-  -y, --yes                          Display results without asking for confirmation.
+  -h, --help                            Display help message.
+  -u USERNAME, --user USERNAME          Your Google username or e-mail address.
+  -p PASSWORD, --pass PASSWORD          Your Google or app-specific password.
+  -l, --log                             Enable gmusicapi logging.
+  -q, --quiet                           Don't output status messages.
+                                        With -l,--log will display gmusicapi warnings.
+  -f FILTER, --include-filter FILTER    Include Google songs by field:pattern filter (e.g. "artist:Muse").
+                                        Songs can match any filter criteria.
+                                        This option can be set multiple times.
+  -F FILTER, --exclude-filter FILTER    Exclude Google songs by field:pattern filter (e.g. "artist:Muse").
+                                        Songs can match any filter criteria.
+                                        This option can be set multiple times.
+  -a, --include-all                     Songs must match all include filter criteria to be included.
+  -A, --exclude-all                     Songs must match all exclude filter criteria to be excluded.
+  -y, --yes                             Display results without asking for confirmation.
+
+Patterns can be any valid Python regex patterns.
 """
 
 from __future__ import unicode_literals
@@ -50,10 +56,11 @@ def main():
 	mcw = MobileClientWrapper()
 	mcw.login(cli['user'], cli['pass'])
 
-	filters = [tuple(filt.split(':', 1)) for filt in cli['filter']]
+	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
+	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
 	logger.info("Scanning for songs...\n")
-	search_results, _ = mcw.get_google_songs(include_filters=filters, all_include_filters=cli['all'])
+	search_results, _ = mcw.get_google_songs(include_filters, exclude_filters, cli['include-all'], cli['exclude-all'])
 	search_results.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
 
 	if search_results:
@@ -71,7 +78,7 @@ def main():
 
 				logger.log(QUIET, "{0} -- {1} -- {2} ({3})".format(title, artist, album, song_id))
 	else:
-		logger.info("No songs found matching query\n")
+		logger.info("\nNo songs found matching query")
 
 	mcw.logout()
 	logger.info("\nAll done!")
