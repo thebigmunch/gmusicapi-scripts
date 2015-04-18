@@ -46,9 +46,9 @@ setup(
 		]
 	},
 	install_requires=[
-		'gmusicapi-wrapper',
 		'gmusicapi',
-		'mutagen'
+		'gmusicapi-wrapper',
+		'docopt-unicode'
 	],
 	zip_safe=False
 )

@@ -39,6 +39,7 @@ from __future__ import unicode_literals
 
 import logging
 import os
+import sys
 
 from docopt import docopt
 
@@ -51,8 +52,11 @@ logger = logging.getLogger('gmusicapi_wrapper')
 sh = logging.StreamHandler()
 logger.addHandler(sh)
 
+encoding = sys.getfilesystemencoding()
+
 
 def main():
+	sys.argv = [arg if isinstance(arg, unicode) else arg.decode(encoding) for arg in sys.argv]
 	cli = dict((key.lstrip("-<").rstrip(">"), value) for key, value in docopt(__doc__).items())
 
 	if cli['quiet']:

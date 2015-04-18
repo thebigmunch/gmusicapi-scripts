@@ -41,6 +41,7 @@ from __future__ import unicode_literals
 
 import logging
 import os
+import sys
 
 from docopt import docopt
 
@@ -53,8 +54,11 @@ logger = logging.getLogger('gmusicapi_wrapper')
 sh = logging.StreamHandler()
 logger.addHandler(sh)
 
+encoding = sys.getfilesystemencoding()
+
 
 def main():
+	sys.argv = [arg if isinstance(arg, unicode) else arg.decode(encoding) for arg in sys.argv]
 	cli = dict((key.lstrip("-<").rstrip(">"), value) for key, value in docopt(__doc__).items())
 
 	if cli['quiet']:
@@ -71,7 +75,7 @@ def main():
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
-	filepath_exclude_patterns = "|".join(pattern.decode('utf8') for pattern in cli['exclude']) if cli['exclude'] else None
+	filepath_exclude_patterns = "|".join(pattern for pattern in cli['exclude']) if cli['exclude'] else None
 
 	songs_to_upload, _, songs_to_exclude = mmw.get_local_songs(
 		cli['input'], include_filters, exclude_filters, cli['include-all'], cli['exclude-all'], filepath_exclude_patterns
