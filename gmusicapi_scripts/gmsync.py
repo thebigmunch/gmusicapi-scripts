@@ -57,7 +57,7 @@ import sys
 from docopt import docopt
 
 from gmusicapi_wrapper import MusicManagerWrapper
-from gmusicapi_wrapper.utils import compare_song_collections, template_to_file_name
+from gmusicapi_wrapper.utils import compare_song_collections, template_to_filepath
 
 QUIET = 25
 logging.addLevelName(25, "QUIET")
@@ -78,7 +78,7 @@ def template_to_base_path(template, google_songs):
 		local_path = [template]
 	else:
 		for song in google_songs:
-			song_paths.append(template_to_file_name(template, song))
+			song_paths.append(template_to_filepath(template, song))
 
 		common_base_path = os.path.commonprefix(song_paths)
 		local_path = [common_base_path]
