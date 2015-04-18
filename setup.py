@@ -5,8 +5,8 @@ import re
 import sys
 from setuptools import setup
 
-if not ((2, 6, 0) <= sys.version_info[:3] < (2, 8)):
-	sys.exit("gmusicapi-scripts only supports Python 2.6 and 2.7.")
+if not ((2, 7, 0) <= sys.version_info[:3] < (2, 8)):
+	sys.exit("gmusicapi-scripts only supports Python 2.7.")
 
 # From http://stackoverflow.com/a/7071358/1231454
 version_file = "gmusicapi_scripts/__init__.py"
@@ -28,7 +28,6 @@ setup(
 	author='thebigmunch',
 	author_email='mail@thebigmunch.me',
 	url='https://github.com/thebigmunch/gmusicapi-scripts',
-	download_url='https://github.com/thebigmunch/gmusicapi-scripts',
 	keywords=[],
 	classifiers=[
 		'License :: OSI Approved :: MIT License',
@@ -51,4 +50,5 @@ setup(
 		'gmusicapi',
 		'mutagen'
 	],
+	zip_safe=False
 )
