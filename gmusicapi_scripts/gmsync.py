@@ -8,7 +8,7 @@ More information at https://github.com/thebigmunch/gmusicapi-scripts.
 Usage:
   gmsync.py (-h | --help)
   gmsync.py up [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
-  gmsync.py down [-f FILTER]... [-F FILTER]... [options] [<output>]
+  gmsync.py down [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<output>]
   gmsync.py [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
 
 Commands:
