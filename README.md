@@ -1,27 +1,29 @@
 gmusicapi-scripts
 =================
 
-A collection of scripts for [gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API).
+A collection of scripts for [gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API) using [gmusicapi-wrapper](https://github.com/thebigmunch/gmusicapi-wrapper).
+
+## Scripts
 
 ### gmdelete
 
-[gmdelete.py](gmdelete.py) is a script to delete songs from your Google Music library.
+gmdelete is a script to delete songs from your Google Music library.
 
 ### gmdownload
 
-[gmdownload.py](gmdownload.py) is a dumb download script. It will download all songs matching the filters.
+gmdownload is a dumb download script. It will download all songs matching the filters.
 
 ### gmsearch
 
-[gmsearch.py](gmsearch.py) is a script to search your Google Music library.
+gmsearch is a script to search your Google Music library.
 
 ### gmsync
 
-[gmsync.py](gmsync.py) is a smart sync script. It can both upload and download songs. Songs from the source that exist on the destination will not be uploaded or downloaded.
+gmsync is a smart sync script. It can both upload and download songs. Songs from the source that exist on the destination will not be uploaded or downloaded.
 
 ### gmupload
 
-[gmupload.py](gmupload.py) is a dumb upload script. It will make an upload request for all files matching the input.
+gmupload is a dumb upload script. It will make an upload request for all files matching the input.
 
 ## Requirements
 
@@ -34,11 +36,15 @@ A collection of scripts for [gmusicapi](https://github.com/simon-weber/Unofficia
 
 ## Installation
 
-See the [INSTALL.md](INSTALL.md) file or the online [Wiki](https://github.com/thebigmunch/gmusicapi-scripts/wiki)
+See the [INSTALL.md](https://github.com/thebigmunch/gmusicapi-scripts/blob/master/INSTALL.md) file or the online [Wiki](https://github.com/thebigmunch/gmusicapi-scripts/wiki)
 
 ## Usage
 
-See the [USAGE.md](USAGE.md) file or the online [Wiki](https://github.com/thebigmunch/gmusicapi-scripts/wiki)
+See the [USAGE.md](https://github.com/thebigmunch/gmusicapi-scripts/blob/master/USAGE.md) file or the online [Wiki](https://github.com/thebigmunch/gmusicapi-scripts/wiki)
+
+## Contributing
+
+See the [CONTRIBUTING.md](https://github.com/thebigmunch/gmusicapi-scripts/blob/master/CONTRIBUTING.md) file
 
 ## Contact
 

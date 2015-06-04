@@ -3,6 +3,7 @@
 
 import re
 import sys
+
 from setuptools import setup
 
 if not ((2, 7, 0) <= sys.version_info[:3] < (2, 8)):
@@ -24,10 +25,11 @@ setup(
 	name='gmusicapi_scripts',
 	version=version,
 	description='A collection of scripts using gmusicapi-wrapper and gmusicapi.',
+	url='https://github.com/thebigmunch/gmusicapi-scripts',
 	license='MIT',
 	author='thebigmunch',
 	author_email='mail@thebigmunch.me',
-	url='https://github.com/thebigmunch/gmusicapi-scripts',
+
 	keywords=[],
 	classifiers=[
 		'License :: OSI Approved :: MIT License',
@@ -35,6 +37,12 @@ setup(
 		'Programming Language :: Python :: 2.6',
 		'Programming Language :: Python :: 2.7',
 	],
+
+	install_requires=[
+		'gmusicapi-wrapper',
+		'docopt-unicode'
+	],
+
 	packages=['gmusicapi_scripts'],
 	entry_points={
 		'console_scripts': [
@@ -45,10 +53,6 @@ setup(
 			'gmupload=gmusicapi_scripts.gmupload:main'
 		]
 	},
-	install_requires=[
-		'gmusicapi',
-		'gmusicapi-wrapper',
-		'docopt-unicode'
-	],
+
 	zip_safe=False
 )
