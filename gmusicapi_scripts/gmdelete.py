@@ -13,6 +13,7 @@ Options:
   -h, --help                            Display help message.
   -u USERNAME, --user USERNAME          Your Google username or e-mail address.
   -p PASSWORD, --pass PASSWORD          Your Google or app-specific password.
+  -I ID --android-id ID                 An Android device id.
   -l, --log                             Enable gmusicapi logging.
   -d, --dry-run                         Output list of songs that would be deleted.
   -q, --quiet                           Don't output status messages.
@@ -60,7 +61,7 @@ def main():
 		logger.setLevel(logging.INFO)
 
 	mcw = MobileClientWrapper()
-	mcw.login(cli['user'], cli['pass'])
+	mcw.login(cli['user'], cli['pass'], cli['android-id'])
 
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
