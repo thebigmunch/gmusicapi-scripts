@@ -73,12 +73,17 @@ def template_to_base_path(template, google_songs):
 	"""Get base output path for a list of songs for download."""
 
 	song_paths = []
+	patterns = {
+		'%artist%': 'artist', '%title%': 'title', '%track%': 'track_number',
+		'%track2%': 'track_number', '%album%': 'album', '%date%': 'date',
+		'%genre%': 'genre', '%albumartist%': 'album_artist', '%disc%': 'disc_number'
+	}
 
 	if template == os.getcwd():
 		local_path = [template]
 	else:
 		for song in google_songs:
-			song_paths.append(template_to_filepath(template, song))
+			song_paths.append(template_to_filepath(template, song, template_patterns=patterns))
 
 		common_base_path = os.path.commonprefix(song_paths)
 		local_path = [common_base_path]
