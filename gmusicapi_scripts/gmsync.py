@@ -32,6 +32,7 @@ Options:
   -q, --quiet                           Don't output status messages.
                                         With -l,--log will display gmusicapi warnings.
                                         With -d,--dry-run will display song list.
+  --delete-on-success                   Delete successfully uploaded local files.
   -e PATTERN, --exclude PATTERN         Exclude file paths matching pattern.
                                         This option can be set multiple times.
   -f FILTER, --include-filter FILTER    Include Google songs (download) or local songs (upload)
@@ -214,9 +215,17 @@ def main():
 			if songs_to_upload:
 				logger.info("\nUploading {0} song(s) to Google Music\n".format(len(songs_to_upload)))
 
-				mmw.upload(songs_to_upload, enable_matching=cli['match'])
+				mmw.upload(songs_to_upload, enable_matching=cli['match'], delete_on_success=cli['delete-on-success'])
 			else:
 				logger.info("\nNo songs to upload")
+
+				# Delete local files if they already exist on Google Music.
+				if cli['delete-on-success']:
+					for song in matched_local_songs:
+						try:
+							os.remove(song)
+						except:
+							logger.warning("Failed to remove {} after successful upload".format(song))
 
 	mmw.logout()
 	logger.info("\nAll done!")
