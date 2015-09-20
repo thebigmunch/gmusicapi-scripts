@@ -25,6 +25,9 @@ Options:
                                         With -l,--log will display gmusicapi warnings.
                                         With -d,--dry-run will display song list.
   --delete-on-success                   Delete successfully uploaded local files.
+  -R, --no-recursion                    Disable recursion when scanning for local files.
+                                        This is equivalent to setting --max-depth to 1.
+  --max-depth DEPTH                     Set maximum depth of recursion when scanning for local files.
   -e PATTERN, --exclude PATTERN         Exclude file paths matching a Python regex pattern.
   -f FILTER, --include-filter FILTER    Include local songs by field:pattern filter (e.g. "artist:Muse").
                                         Songs can match any filter criteria.
@@ -105,7 +108,8 @@ def main():
 	filepath_exclude_patterns = "|".join(pattern for pattern in cli['exclude']) if cli['exclude'] else None
 
 	songs_to_upload, _, songs_to_exclude = mmw.get_local_songs(
-		cli['input'], include_filters, exclude_filters, cli['include-all'], cli['exclude-all'], filepath_exclude_patterns
+		cli['input'], include_filters, exclude_filters, cli['include-all'], cli['exclude-all'],
+		filepath_exclude_patterns, not cli['no-recursion'], int(cli['max-depth'])
 	)
 
 	songs_to_upload.sort()
