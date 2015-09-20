@@ -25,8 +25,8 @@ Pattern       | Field
 ## gmsearch
 
 ```
-gmsearch.py (-h | --help)
-gmsearch.py [options] [-f FILTER]... [-F FILTER]...
+gmsearch (-h | --help)
+gmsearch [options] [-f FILTER]... [-F FILTER]...
 ```
 
 Options                      | Description
@@ -46,8 +46,8 @@ Options                      | Description
 ## gmdelete
 
 ```
-gmdelete.py (-h | --help)
-gmdelete.py [options] [-f FILTER]... [-F FILTER]...
+gmdelete (-h | --help)
+gmdelete [options] [-f FILTER]... [-F FILTER]...
 ```
 
 Options                      | Description
@@ -68,10 +68,10 @@ Options                      | Description
 ## gmsync
 
 ```
-gmsync.py (-h | --help)
-gmsync.py up [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
-gmsync.py down [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<output>]
-gmsync.py [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
+gmsync (-h | --help)
+gmsync up [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
+gmsync down [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<output>]
+gmsync [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
 ```
 
 Supports **.mp3**, **.flac**, **.m4a**, **.ogg**  
@@ -115,8 +115,8 @@ gmsync down -f 'artist:Muse|Modest Mouse' "/path/to/%artist%/%album%/%title%"
 ## gmupload
 
 ```
-gmupload.py (-h | --help)
-gmupload.py [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
+gmupload (-h | --help)
+gmupload [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
 ```
 
 Supports **.mp3**, **.flac**, **.m4a**, **.ogg**  
@@ -152,8 +152,8 @@ gmupload -f 'artist:Muse' "/path/to/music"
 ## gmdownload
 
 ```
-gmdownload.py (-h | --help)
-gmdownload.py [-f FILTER]... [-F FILTER]... [options] [<output>
+gmdownload (-h | --help)
+gmdownload [-f FILTER]... [-F FILTER]... [options] [<output>
 ```
 
 Options                | Description
