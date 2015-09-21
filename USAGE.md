@@ -34,6 +34,7 @@ Options                      | Description
 -h, --help                   | Show help message
 -u USERNAME, --user USERNAME | Your Google username or e-mail address
 -p PASSWORD, --pass PASSWORD | Your Google or app-specific password
+-I ID --android-id ID        | An Android device id.
 -l, --log                    | Enable gmusicapi logging
 -q, --quiet                  | Don't output status messages<br>With -l,--log will display gmusicapi warnings
 -f, --include-filter         | Include Google songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
@@ -55,6 +56,7 @@ Options                      | Description
 -h, --help                   | Show help message
 -u USERNAME, --user USERNAME | Your Google username or e-mail address
 -p PASSWORD, --pass PASSWORD | Your Google or app-specific password
+-I ID --android-id ID        | An Android device id.
 -l, --log                    | Enable gmusicapi logging
 -d, --dry-run                | Output list of songs that would be uploaded and excluded
 -q, --quiet                  | Don't output status messages<br>With -l,--log will display gmusicapi warnings
@@ -86,6 +88,9 @@ Options                | Description
 -m, --match            | Enable scan and match
 -d, --dry-run          | Output list of songs that would be uploaded and excluded
 -q, --quiet            | Don't output status messages<br>With -l,--log will display gmusicapi warnings<br>With -d,--dry-run will display song list
+--delete-on-success    | Delete successfully uploaded local files.
+-R, --no-recursion     | Disable recursion when scanning for local files.<br>This is equivalent to setting --max-depth to 1.
+--max-depth DEPTH      | Set maximum depth of recursion when scanning for local files.
 -e, -exclude           | Exclude file paths matching a Python regex pattern<br>This option can be set multiple times
 -f, --include-filter   | Include Google songs (download) or local songs (upload) by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
 -F, --exclude-filter   | Exclude Google songs (download) or local songs (upload) by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
@@ -131,6 +136,9 @@ Options                | Description
 -m, --match            | Enable scan and match
 -d, --dry-run          | Output list of songs that would be uploaded and excluded
 -q, --quiet            | Don't output status messages<br>With -l,--log will display gmusicapi warnings<br>With -d,--dry-run will display song list
+--delete-on-success    | Delete successfully uploaded local files.
+-R, --no-recursion     | Disable recursion when scanning for local files.<br>This is equivalent to setting --max-depth to 1.
+--max-depth DEPTH      | Set maximum depth of recursion when scanning for local files.
 -e, -exclude           | Exclude file paths matching a Python regex pattern<br>This option can be set multiple times
 -f, --include-filter   | Include local songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
 -F, --exclude-filter   | Exclude local songs by field:pattern filter (e.g. "artist:Muse").*<br>Values can be any valid [Python regex pattern](http://docs.python.org/2/library/re.html)<br>This option can be set multiple times
