@@ -36,7 +36,14 @@ gmupload is a dumb upload script. It will make an upload request for all files m
 
 ## Installation
 
-See the [INSTALL.md](https://github.com/thebigmunch/gmusicapi-scripts/blob/master/INSTALL.md) file or the online [Wiki](https://github.com/thebigmunch/gmusicapi-scripts/wiki)
+* Stable release
+
+		pip install gmusicapi-scripts
+		pip install git+https://github.com/thebigmunch/gmusicapi-scripts
+
+* Development release
+
+		pip install git+https://github.com/thebigmunch/gmusicapi-scripts@devel
 
 ## Usage
 
