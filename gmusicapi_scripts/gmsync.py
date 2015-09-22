@@ -36,6 +36,7 @@ Options:
   -R, --no-recursion                    Disable recursion when scanning for local files.
                                         This is equivalent to setting --max-depth to 1.
   --max-depth DEPTH                     Set maximum depth of recursion when scanning for local files.
+                                        Default is infinite recursion. [Default: 0]
   -e PATTERN, --exclude PATTERN         Exclude file paths matching pattern.
                                         This option can be set multiple times.
   -f FILTER, --include-filter FILTER    Include Google songs (download) or local songs (upload)

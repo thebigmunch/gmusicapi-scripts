@@ -28,6 +28,7 @@ Options:
   -R, --no-recursion                    Disable recursion when scanning for local files.
                                         This is equivalent to setting --max-depth to 1.
   --max-depth DEPTH                     Set maximum depth of recursion when scanning for local files.
+                                        Default is infinite recursion. [Default: 0]
   -e PATTERN, --exclude PATTERN         Exclude file paths matching a Python regex pattern.
   -f FILTER, --include-filter FILTER    Include local songs by field:pattern filter (e.g. "artist:Muse").
                                         Songs can match any filter criteria.
