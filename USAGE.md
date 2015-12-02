@@ -1,6 +1,14 @@
 Usage
 =====
 
+- [General](#General)
+- [Output pattern replacements](#Output pattern replacements)
+- [gmsearch](#gmsearch)
+- [gmdelete](#gmdelete)
+- [gmsync](#gmsync)
+- [gmupload](#gmupload)
+- [gmdownload](#gmdownload)
+
 ## General
 
 ``script [options] [input/output]``
