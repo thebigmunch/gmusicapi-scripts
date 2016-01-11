@@ -66,4 +66,4 @@ Donations, as any compliment, are appreciated but not expected.
 
 -----
 
-Copyright (c) 2015 [thebigmunch](mailto:mail@thebigmunch.me). Licensed under the MIT License. See [LICENSE](LICENSE).
+Copyright (c) 2016 [thebigmunch](mailto:mail@thebigmunch.me). Licensed under the MIT License. See [LICENSE](LICENSE).
