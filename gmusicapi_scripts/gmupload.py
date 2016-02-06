@@ -1,13 +1,13 @@
 #!/usr/bin/env python2
-# -*- coding: utf-8 -*-
+# coding=utf-8
 
 """
 An upload script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
 More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
-  gmupload.py (-h | --help)
-  gmupload.py [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
+  gmupload (-h | --help)
+  gmupload [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
 
 Arguments:
   input                          Files, directories, or glob patterns to upload.

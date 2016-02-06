@@ -1,13 +1,13 @@
 #!/usr/bin/env python2
-# -*- coding: utf-8 -*-
+# coding=utf-8
 
 """
 A download script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
 More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
-  gmdownload.py (-h | --help)
-  gmdownload.py [-f FILTER]... [-F FILTER]... [options] [<output>]
+  gmdownload (-h | --help)
+  gmdownload [-f FILTER]... [-F FILTER]... [options] [<output>]
 
 Arguments:
   output                                Output file or directory name which can include a template pattern.

@@ -1,15 +1,15 @@
 #!/usr/bin/env python2
-# -*- coding: utf-8 -*-
+# coding=utf-8
 
 """
 A sync script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
 More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
-  gmsync.py (-h | --help)
-  gmsync.py up [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
-  gmsync.py down [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<output>]
-  gmsync.py [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
+  gmsync (-h | --help)
+  gmsync up [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
+  gmsync down [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<output>]
+  gmsync [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
 
 Commands:
   up                             Sync local songs to Google Music. Default behavior.

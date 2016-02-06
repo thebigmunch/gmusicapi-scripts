@@ -1,13 +1,13 @@
 #!/usr/bin/env python2
-# -*- coding: utf-8 -*-
+# coding=utf-8
 
 """
 A script to delete songs from your Google Music library using https://github.com/simon-weber/Unofficial-Google-Music-API.
 More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
-  gmdelete.py (-h | --help)
-  gmdelete.py [options] [-f FILTER]... [-F FILTER]...
+  gmdelete (-h | --help)
+  gmdelete [options] [-f FILTER]... [-F FILTER]...
 
 Options:
   -h, --help                            Display help message.

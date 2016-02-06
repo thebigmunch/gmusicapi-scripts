@@ -1,13 +1,13 @@
 #!/usr/bin/env python2
-# -*- coding: utf-8 -*-
+# coding=utf-8
 
 """
 A script to search your Google Music library using https://github.com/simon-weber/Unofficial-Google-Music-API.
 More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:
-  gmsearch.py (-h | --help)
-  gmsearch.py [options] [-f FILTER]... [-F FILTER]...
+  gmsearch (-h | --help)
+  gmsearch [options] [-f FILTER]... [-F FILTER]...
 
 Options:
   -h, --help                            Display help message.

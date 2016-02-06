@@ -1,10 +1,10 @@
 #!/usr/bin/env python2
-# -*- coding: utf-8 -*-
+# coding=utf-8
 
 import re
 import sys
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 if not ((2, 7, 0) <= sys.version_info[:3] < (2, 8)):
 	sys.exit("gmusicapi-scripts only supports Python 2.7.")
@@ -42,7 +42,7 @@ setup(
 		'docopt-unicode'
 	],
 
-	packages=['gmusicapi_scripts'],
+	packages=find_packages(),
 	entry_points={
 		'console_scripts': [
 			'gmdelete=gmusicapi_scripts.gmdelete:main',
