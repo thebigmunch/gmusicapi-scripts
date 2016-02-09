@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # coding=utf-8
 
 import re
@@ -6,8 +6,8 @@ import sys
 
 from setuptools import find_packages, setup
 
-if not ((2, 7, 0) <= sys.version_info[:3] < (2, 8)):
-	sys.exit("gmusicapi-scripts only supports Python 2.7.")
+if sys.version_info[:3] < (3, 4):
+	sys.exit("gmusicapi-wrapper does not support this version of Python.")
 
 # From http://stackoverflow.com/a/7071358/1231454
 version_file = "gmusicapi_scripts/__init__.py"
@@ -19,7 +19,7 @@ match = re.search(version_re, version_file_contents, re.M)
 if match:
     version = match.group(1)
 else:
-    raise RuntimeError("Could not find version in '%s'" % version_file)
+    raise RuntimeError("Could not find version in '{}'".format(version_file))
 
 setup(
 	name='gmusicapi_scripts',
@@ -33,12 +33,13 @@ setup(
 	keywords=[],
 	classifiers=[
 		'License :: OSI Approved :: MIT License',
-		'Programming Language :: Python :: 2',
-		'Programming Language :: Python :: 2.7',
+		'Programming Language :: Python :: 3',
+		'Programming Language :: Python :: 3.4',
+		'Programming Language :: Python :: 3.5',
 	],
 
 	install_requires=[
-		'gmusicapi-wrapper',
+		'gmusicapi-wrapper == 0.2.0',
 		'docopt-unicode'
 	],
 

@@ -27,7 +27,7 @@ gmupload is a dumb upload script. It will make an upload request for all files m
 
 ## Requirements
 
-* Python 2.7
+* Python 3.4+
 * [gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API)
 * [gmusicapi-wrapper](https://github.com/thebigmunch/gmusicapi-wrapper)
 * [mutagen](https://bitbucket.org/lazka/mutagen)
