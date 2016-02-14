@@ -69,7 +69,7 @@ def main():
 
 	songs_to_download, _ = mmw.get_google_songs(include_filters, exclude_filters, cli['include-all'], cli['exclude-all'])
 
-	songs_to_download.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
+	songs_to_download.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('track_number')))
 
 	if cli['dry-run']:
 		logger.info("\nFound {0} song(s) to download".format(len(songs_to_download)))

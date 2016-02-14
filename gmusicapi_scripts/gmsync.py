@@ -125,7 +125,7 @@ def main():
 		logger.info("\nScanning for missing songs...")
 		songs_to_download = compare_song_collections(matched_google_songs, matched_local_songs)
 
-		songs_to_download.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
+		songs_to_download.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('track_number')))
 
 		if cli['dry-run']:
 			logger.info("\nFound {0} song(s) to download".format(len(songs_to_download)))
