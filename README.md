@@ -31,6 +31,16 @@ See the [USAGE.md](https://github.com/thebigmunch/gmusicapi-scripts/blob/master/
 
 See the [CONTRIBUTING.md](https://github.com/thebigmunch/gmusicapi-scripts/blob/master/CONTRIBUTING.md) file
 
+## FAQ
+
+##### Is it possible to add support for downloading All Access songs?
+
+Yes.
+
+##### Would you add support for downloading All Access songs?
+
+Almost certainly never. All Access songs are obviously not intended for download. Your All Access subscription allows you to stream these songs as long as you subscribe. Circumventing this restriction would only bring unwanted attention, criticism, and repercussions to gmusicapi.
+
 ## Contact
 
 You can contact the author in ``#gmusicapi`` on ``irc.freenode.net`` or by [e-mail](mailto:mail@thebigmunch.me)
