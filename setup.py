@@ -39,7 +39,7 @@ setup(
 	],
 
 	install_requires=[
-		'gmusicapi-wrapper == 0.2.0',
+		'gmusicapi-wrapper >= 0.2.0, < 0.3.0',
 		'docopt-unicode'
 	],
 
@@ -53,6 +53,4 @@ setup(
 			'gmupload=gmusicapi_scripts.gmupload:main'
 		]
 	},
-
-	zip_safe=False
 )

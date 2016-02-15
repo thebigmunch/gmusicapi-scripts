@@ -2,6 +2,21 @@
 
 Notable changes for the [gmusicapi-scripts](https://github.com/thebigmunch/gmusicapi-scripts) project. This project uses [Semantic Versioning](http://semver.org/) principles.
 
+
+## [0.2.1](https://github.com/thebigmunch/gmusicapi-scripts/releases/tag/0.2.1) (2016-02-15)
+
+[Commits](https://github.com/thebigmunch/gmusicapi-scripts/compare/0.2.0...0.2.1)
+
+### Fixed
+
+* Use correct track number metadata key for sorting.
+* Fix delete on success check.
+
+### Changed
+
+* Update supported gmusicapi-wrapper versions.
+
+
 ## [0.2.0](https://github.com/thebigmunch/gmusicapi-scripts/releases/tag/0.2.0) (2016-02-13)
 
 [Commits](https://github.com/thebigmunch/gmusicapi-scripts/compare/0.1.0...0.2.0)

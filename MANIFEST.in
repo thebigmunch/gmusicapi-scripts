@@ -1,2 +1,1 @@
 include CONTRIBUTING.md LICENSE README.md USAGE.md
-include gmusicapi_scripts/_version.py
