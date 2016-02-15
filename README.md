@@ -3,28 +3,6 @@ gmusicapi-scripts
 
 A collection of scripts for [gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API) using [gmusicapi-wrapper](https://github.com/thebigmunch/gmusicapi-wrapper).
 
-## Scripts
-
-### gmdelete
-
-gmdelete is a script to delete songs from your Google Music library.
-
-### gmdownload
-
-gmdownload is a dumb download script. It will download all songs matching the filters.
-
-### gmsearch
-
-gmsearch is a script to search your Google Music library.
-
-### gmsync
-
-gmsync is a smart sync script. It can both upload and download songs. Songs from the source that exist on the destination will not be uploaded or downloaded.
-
-### gmupload
-
-gmupload is a dumb upload script. It will make an upload request for all files matching the input.
-
 ## Requirements
 
 * Python 3.4+
