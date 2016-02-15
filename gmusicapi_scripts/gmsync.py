@@ -12,14 +12,14 @@ Usage:
   gmsync [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
 
 Commands:
-  up                             Sync local songs to Google Music. Default behavior.
-  down                           Sync Google Music songs to local computer.
+  up                                    Sync local songs to Google Music. Default behavior.
+  down                                  Sync Google Music songs to local computer.
 
 Arguments:
-  input                          Files, directories, or glob patterns to upload.
-                                 Defaults to current directory.
-  output                         Output file or directory name which can include a template pattern.
-                                 Defaults to name suggested by Google Music in your current directory.
+  input                                 Files, directories, or glob patterns to upload.
+                                        Defaults to current directory.
+  output                                Output file or directory name which can include a template pattern.
+                                        Defaults to name suggested by Google Music in your current directory.
 
 Options:
   -h, --help                            Display help message.

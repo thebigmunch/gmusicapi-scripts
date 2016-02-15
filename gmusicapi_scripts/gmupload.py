@@ -10,8 +10,8 @@ Usage:
   gmupload [-e PATTERN]... [-f FILTER]... [-F FILTER]... [options] [<input>]...
 
 Arguments:
-  input                          Files, directories, or glob patterns to upload.
-                                 Defaults to current directory.
+  input                                 Files, directories, or glob patterns to upload.
+                                        Defaults to current directory.
 
 Options:
   -h, --help                            Display help message.
