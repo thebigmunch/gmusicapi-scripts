@@ -29,8 +29,8 @@ Options:
   -F FILTER, --exclude-filter FILTER    Exclude Google songs by field:pattern filter (e.g. "artist:Muse").
                                         Songs can match any filter criteria.
                                         This option can be set multiple times.
-  -a, --include-all                     Songs must match all include filter criteria to be included.
-  -A, --exclude-all                     Songs must match all exclude filter criteria to be excluded.
+  -a, --all-includes                    Songs must match all include filter criteria to be included.
+  -A, --all-excludes                    Songs must match all exclude filter criteria to be excluded.
 
 Patterns can be any valid Python regex patterns.
 """
@@ -61,13 +61,13 @@ def main():
 	if not cli['output']:
 		cli['output'] = os.getcwd()
 
-	mmw = MusicManagerWrapper(log=cli['log'])
+	mmw = MusicManagerWrapper(enable_logging=cli['log'])
 	mmw.login(oauth_filename=cli['cred'], uploader_id=cli['uploader-id'])
 
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
-	songs_to_download, _ = mmw.get_google_songs(include_filters, exclude_filters, cli['include-all'], cli['exclude-all'])
+	songs_to_download, _ = mmw.get_google_songs(include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'])
 
 	songs_to_download.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('track_number')))
 

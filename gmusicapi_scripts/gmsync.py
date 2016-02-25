@@ -34,9 +34,10 @@ Options:
                                         With -d,--dry-run will display song list.
   --delete-on-success                   Delete successfully uploaded local files.
   -R, --no-recursion                    Disable recursion when scanning for local files.
-                                        This is equivalent to setting --max-depth to 1.
+                                        This is equivalent to setting --max-depth to 0.
   --max-depth DEPTH                     Set maximum depth of recursion when scanning for local files.
-                                        Default is infinite recursion. [Default: 0]
+                                        Default is infinite recursion.
+                                        Has no effect when -R, --no-recursion set.
   -e PATTERN, --exclude PATTERN         Exclude file paths matching pattern.
                                         This option can be set multiple times.
   -f FILTER, --include-filter FILTER    Include Google songs (download) or local songs (upload)
@@ -47,8 +48,8 @@ Options:
                                         by field:pattern filter (e.g. "artist:Muse").
                                         Songs can match any filter criteria.
                                         This option can be set multiple times.
-  -a, --include-all                     Songs must match all include filter criteria to be included.
-  -A, --exclude-all                     Songs must match all exclude filter criteria to be excluded.
+  -a, --all-includes                    Songs must match all include filter criteria to be included.
+  -A, --all-excludes                    Songs must match all exclude filter criteria to be excluded.
 
 Patterns can be any valid Python regex patterns.
 """
@@ -94,6 +95,11 @@ def template_to_base_path(template, google_songs):
 def main():
 	cli = dict((key.lstrip("-<").rstrip(">"), value) for key, value in docopt(__doc__).items())
 
+	if cli['no-recursion']:
+		cli['max-depth'] = 0
+	else:
+		cli['max-depth'] = int(cli['max-depth']) if cli['max-depth'] else float('inf')
+
 	if cli['quiet']:
 		logger.setLevel(QUIET)
 	else:
@@ -108,19 +114,19 @@ def main():
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
-	filepath_exclude_patterns = "|".join(pattern for pattern in cli['exclude']) if cli['exclude'] else None
+	exclude_patterns = "|".join(pattern for pattern in cli['exclude']) if cli['exclude'] else None
 
-	mmw = MusicManagerWrapper(log=cli['log'])
+	mmw = MusicManagerWrapper(enable_logging=cli['log'])
 	mmw.login(oauth_filename=cli['cred'], uploader_id=cli['uploader-id'])
 
 	if cli['down']:
-		matched_google_songs, _ = mmw.get_google_songs(include_filters, exclude_filters, cli['include-all'], cli['exclude-all'])
+		matched_google_songs, _ = mmw.get_google_songs(include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'])
 
 		logger.info("")
 
 		cli['input'] = template_to_base_path(cli['output'], matched_google_songs)
 
-		matched_local_songs, _, _ = mmw.get_local_songs(cli['input'], filepath_exclude_patterns=filepath_exclude_patterns)
+		matched_local_songs, _, _ = mmw.get_local_songs(cli['input'], exclude_patterns=exclude_patterns)
 
 		logger.info("\nScanning for missing songs...")
 		songs_to_download = compare_song_collections(matched_google_songs, matched_local_songs)
@@ -154,8 +160,8 @@ def main():
 		logger.info("")
 
 		matched_local_songs, _, songs_to_exclude = mmw.get_local_songs(
-			cli['input'], include_filters, exclude_filters, cli['include-all'], cli['exclude-all'],
-			filepath_exclude_patterns, not cli['no-recursion'], int(cli['max-depth'])
+			cli['input'], include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'],
+			exclude_patterns, cli['max-depth']
 		)
 
 		logger.info("\nScanning for missing songs...")

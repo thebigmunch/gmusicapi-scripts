@@ -23,8 +23,8 @@ Options:
   -F FILTER, --exclude-filter FILTER    Exclude Google songs by field:pattern filter (e.g. "artist:Muse").
                                         Songs can match any filter criteria.
                                         This option can be set multiple times.
-  -a, --include-all                     Songs must match all include filter criteria to be included.
-  -A, --exclude-all                     Songs must match all exclude filter criteria to be excluded.
+  -a, --all-includes                    Songs must match all include filter criteria to be included.
+  -A, --all-excludes                    Songs must match all exclude filter criteria to be excluded.
   -y, --yes                             Display results without asking for confirmation.
 
 Patterns can be any valid Python regex patterns.
@@ -52,14 +52,14 @@ def main():
 	else:
 		logger.setLevel(logging.INFO)
 
-	mcw = MobileClientWrapper()
+	mcw = MobileClientWrapper(enable_logging=cli['log'])
 	mcw.login(cli['user'], cli['pass'], cli['android-id'])
 
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
 	logger.info("Scanning for songs...\n")
-	search_results, _ = mcw.get_google_songs(include_filters, exclude_filters, cli['include-all'], cli['exclude-all'])
+	search_results, _ = mcw.get_google_songs(include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'])
 	search_results.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
 
 	if search_results:

@@ -26,9 +26,10 @@ Options:
                                         With -d,--dry-run will display song list.
   --delete-on-success                   Delete successfully uploaded local files.
   -R, --no-recursion                    Disable recursion when scanning for local files.
-                                        This is equivalent to setting --max-depth to 1.
+                                        This is equivalent to setting --max-depth to 0.
   --max-depth DEPTH                     Set maximum depth of recursion when scanning for local files.
-                                        Default is infinite recursion. [Default: 0]
+                                        Default is infinite recursion.
+                                        Has no effect when -R, --no-recursion set.
   -e PATTERN, --exclude PATTERN         Exclude file paths matching a Python regex pattern.
   -f FILTER, --include-filter FILTER    Include local songs by field:pattern filter (e.g. "artist:Muse").
                                         Songs can match any filter criteria.
@@ -36,8 +37,8 @@ Options:
   -F FILTER, --exclude-filter FILTER    Exclude local songs by field:pattern filter (e.g. "artist:Muse").
                                         Songs can match any filter criteria.
                                         This option can be set multiple times.
-  -a, --include-all                     Songs must match all include filter criteria to be included.
-  -A, --exclude-all                     Songs must match all exclude filter criteria to be excluded.
+  -a, --all-includes                    Songs must match all include filter criteria to be included.
+  -A, --all-excludes                    Songs must match all exclude filter criteria to be excluded.
 
 Patterns can be any valid Python regex patterns.
 """
@@ -60,6 +61,11 @@ logger.addHandler(sh)
 def main():
 	cli = dict((key.lstrip("-<").rstrip(">"), value) for key, value in docopt(__doc__).items())
 
+	if cli['no-recursion']:
+		cli['max-depth'] = 0
+	else:
+		cli['max-depth'] = int(cli['max-depth']) if cli['max-depth'] else float('inf')
+
 	if cli['quiet']:
 		logger.setLevel(QUIET)
 	else:
@@ -68,17 +74,17 @@ def main():
 	if not cli['input']:
 		cli['input'] = [os.getcwd()]
 
-	mmw = MusicManagerWrapper(log=cli['log'])
+	mmw = MusicManagerWrapper(enable_logging=cli['log'])
 	mmw.login(oauth_filename=cli['cred'], uploader_id=cli['uploader-id'])
 
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
-	filepath_exclude_patterns = "|".join(pattern for pattern in cli['exclude']) if cli['exclude'] else None
+	exclude_patterns = "|".join(pattern for pattern in cli['exclude']) if cli['exclude'] else None
 
 	songs_to_upload, _, songs_to_exclude = mmw.get_local_songs(
-		cli['input'], include_filters, exclude_filters, cli['include-all'], cli['exclude-all'],
-		filepath_exclude_patterns, not cli['no-recursion'], int(cli['max-depth'])
+		cli['input'], include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'],
+		exclude_patterns, cli['max-depth']
 	)
 
 	songs_to_upload.sort()
