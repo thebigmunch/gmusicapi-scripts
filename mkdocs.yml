@@ -1,0 +1,18 @@
+site_name: gmusicapi-scripts
+repo_url: https://github.com/thebigmunch/gmusicapi-scripts
+theme: material
+extra:
+    palette:
+        primary: indigo
+        accent: light blue
+    author:
+        github: thebigmunch
+markdown_extensions:
+    - nl2br
+
+pages:
+    - Home: index.md
+    - Install: install.md
+    - Use: usage.md
+    - Contribute: contributing.md
+    - Changelog: changelog.md

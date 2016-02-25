@@ -33,4 +33,4 @@ Each commit should encompass the smallest logical changeset (e.g. changing two u
 [fork]: https://help.github.com/articles/fork-a-repo
 
 ## Misc
-For anything else, contact me by e-mail at mail@thebigmunch.me or on IRC in ``#gmusicapi`` on ``irc.freenode.net``
+For anything else, contact me by e-mail at <mail@thebigmunch.me> or on IRC in ``#gmusicapi`` on ``irc.freenode.net``

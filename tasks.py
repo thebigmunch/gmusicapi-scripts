@@ -15,6 +15,7 @@ def clean():
 	run('rm -rf .cache')
 	run('rm -rf build/')
 	run('rm -rf dist/')
+	run('rm -rf site/')
 	run('find . -name *.pyc -delete')
 	run('find . -name *.pyo -delete')
 	run('find . -name __pycache__ -delete -depth')
