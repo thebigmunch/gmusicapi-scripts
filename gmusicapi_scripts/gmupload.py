@@ -82,7 +82,7 @@ def main():
 
 	exclude_patterns = "|".join(pattern for pattern in cli['exclude']) if cli['exclude'] else None
 
-	songs_to_upload, _, songs_to_exclude = mmw.get_local_songs(
+	songs_to_upload, songs_to_filter, songs_to_exclude = mmw.get_local_songs(
 		cli['input'], include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'],
 		exclude_patterns, cli['max-depth']
 	)
@@ -100,6 +100,14 @@ def main():
 				logger.log(QUIET, song)
 		else:
 			logger.info("\nNo songs to upload")
+
+		if songs_to_filter:
+			logger.info("\nSongs to filter:\n")
+
+			for song in songs_to_filter:
+				logger.log(QUIET, song)
+		else:
+			logger.info("\nNo songs to filter")
 
 		if songs_to_exclude:
 			logger.info("\nSongs to exclude:\n")
