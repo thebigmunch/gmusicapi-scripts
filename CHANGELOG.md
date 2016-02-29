@@ -3,6 +3,21 @@
 Notable changes for the [gmusicapi-scripts](https://github.com/thebigmunch/gmusicapi-scripts) project. This project uses [Semantic Versioning](http://semver.org/) principles.
 
 
+## [0.3.0](https://github.com/thebigmunch/gmusicapi-scripts/releases/tag/0.3.0) (2016-02-29)
+
+[Commits](https://github.com/thebigmunch/gmusicapi-scripts/compare/0.2.1...0.3.0)
+
+### Added
+
+* Output songs to be filtered in dry-run.
+
+### Changed
+
+* Change --include-all to --all-includes to match parameter change in gmusicapi-wrapper.
+* Change --exclude-all to --all-excludes to match parameter change in gmusicapi-wrapper.
+* Change behavior of --max-depth=0; it now limits to the current directory level instead of being infinite recursion.
+
+
 ## [0.2.1](https://github.com/thebigmunch/gmusicapi-scripts/releases/tag/0.2.1) (2016-02-15)
 
 [Commits](https://github.com/thebigmunch/gmusicapi-scripts/compare/0.2.0...0.2.1)
