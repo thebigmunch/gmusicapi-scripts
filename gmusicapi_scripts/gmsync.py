@@ -114,8 +114,6 @@ def main():
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
-	exclude_patterns = "|".join(pattern for pattern in cli['exclude']) if cli['exclude'] else None
-
 	mmw = MusicManagerWrapper(enable_logging=cli['log'])
 	mmw.login(oauth_filename=cli['cred'], uploader_id=cli['uploader-id'])
 
@@ -126,7 +124,7 @@ def main():
 
 		cli['input'] = template_to_base_path(cli['output'], matched_google_songs)
 
-		matched_local_songs, _, _ = mmw.get_local_songs(cli['input'], exclude_patterns=exclude_patterns)
+		matched_local_songs, _, _ = mmw.get_local_songs(cli['input'], exclude_patterns=cli['exclude'])
 
 		logger.info("\nScanning for missing songs...")
 		songs_to_download = compare_song_collections(matched_google_songs, matched_local_songs)
@@ -161,7 +159,7 @@ def main():
 
 		matched_local_songs, songs_to_filter, songs_to_exclude = mmw.get_local_songs(
 			cli['input'], include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'],
-			exclude_patterns, cli['max-depth']
+			cli['exclude'], cli['max-depth']
 		)
 
 		logger.info("\nScanning for missing songs...")

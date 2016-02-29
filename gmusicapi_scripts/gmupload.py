@@ -80,11 +80,9 @@ def main():
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
-	exclude_patterns = "|".join(pattern for pattern in cli['exclude']) if cli['exclude'] else None
-
 	songs_to_upload, songs_to_filter, songs_to_exclude = mmw.get_local_songs(
 		cli['input'], include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'],
-		exclude_patterns, cli['max-depth']
+		cli['exclude'], cli['max-depth']
 	)
 
 	songs_to_upload.sort()
