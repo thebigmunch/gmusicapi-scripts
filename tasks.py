@@ -37,6 +37,16 @@ def deploy():
 
 
 @task
+def docs(test=False):
+	""""Build the gmusicapi_scripts docs."""
+
+	if test:
+		run('mkdocs serve')
+	else:
+		run('mkdocs gh-deploy --clean')
+
+
+@task
 def upload():
 	"""Upload gmusicapi_scripts distributions using twine."""
 
