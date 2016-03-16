@@ -2,7 +2,7 @@
 # coding=utf-8
 
 """
-A download script for Google Music using https://github.com/simon-weber/Unofficial-Google-Music-API.
+A download script for Google Music using https://github.com/simon-weber/gmusicapi.
 More information at https://github.com/thebigmunch/gmusicapi-scripts.
 
 Usage:

@@ -1,7 +1,7 @@
 gmusicapi-scripts
 =================
 
-A collection of scripts for [gmusicapi](https://github.com/simon-weber/Unofficial-Google-Music-API) using [gmusicapi-wrapper](https://github.com/thebigmunch/gmusicapi-wrapper).
+A collection of scripts for [gmusicapi](https://github.com/simon-weber/gmusicapi) using [gmusicapi-wrapper](https://github.com/thebigmunch/gmusicapi-wrapper).
 
 
 ## Documentation
