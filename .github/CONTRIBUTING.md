@@ -10,10 +10,11 @@ Some general guidelines to follow:
 
 ## Submitting code
 
-Patches are welcome. Keep your code consistent with the rest of the project. [PEP8](https://www.python.org/dev/peps/pep-0008/) is a good guide, but with the following specific exceptions to keep in mind for coding/linting:
+Patches are welcome. Keep your code consistent with the rest of the project. [PEP8](https://www.python.org/dev/peps/pep-0008/) is a good guide, but with the following exceptions to keep in mind for coding/linting:
 
 * Tabs should be used for indentation of code.
-* I don't have a set maximum line length. However, I do like to keep lines viewable in my editor when windowed (150).
+* Don't use line continuation that aligns with opening delimiter.
+* I don't set a hard maximum line length. Instead, I try to keep line lengths as reasonable as possible without hurting readability nor ease of comprehension.
 
 Some linter errors may need to be ignored to accommodate these differences.
 
