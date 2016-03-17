@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 
 __title__ = 'gmusicapi_scripts'
 __version__ = "0.3.0"
