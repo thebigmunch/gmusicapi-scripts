@@ -56,6 +56,7 @@ Patterns can be any valid Python regex patterns.
 
 import logging
 import os
+import sys
 
 from docopt import docopt
 
@@ -116,6 +117,9 @@ def main():
 
 	mmw = MusicManagerWrapper(enable_logging=cli['log'])
 	mmw.login(oauth_filename=cli['cred'], uploader_id=cli['uploader-id'])
+
+	if not mmw.is_authenticated:
+		sys.exit()
 
 	if cli['down']:
 		matched_google_songs, _ = mmw.get_google_songs(include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'])

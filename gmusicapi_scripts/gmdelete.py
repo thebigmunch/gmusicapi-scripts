@@ -33,6 +33,7 @@ Patterns can be any valid Python regex patterns.
 """
 
 import logging
+import sys
 
 from docopt import docopt
 
@@ -56,6 +57,8 @@ def main():
 
 	mcw = MobileClientWrapper(enable_logging=cli['log'])
 	mcw.login(cli['user'], cli['pass'], cli['android-id'])
+	if not mcw.is_authenticated:
+		sys.exit()
 
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]

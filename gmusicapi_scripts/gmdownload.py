@@ -37,6 +37,7 @@ Patterns can be any valid Python regex patterns.
 
 import logging
 import os
+import sys
 
 from docopt import docopt
 
@@ -63,6 +64,9 @@ def main():
 
 	mmw = MusicManagerWrapper(enable_logging=cli['log'])
 	mmw.login(oauth_filename=cli['cred'], uploader_id=cli['uploader-id'])
+
+	if not mmw.is_authenticated:
+		sys.exit()
 
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
