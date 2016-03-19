@@ -71,7 +71,10 @@ def main():
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
-	songs_to_download, songs_to_filter = mmw.get_google_songs(include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'])
+	songs_to_download, songs_to_filter = mmw.get_google_songs(
+		include_filters=include_filters, exclude_filters=exclude_filters,
+		all_includes=cli['all-includes'], all_excludes=cli['all-excludes']
+	)
 
 	songs_to_download.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('track_number')))
 
@@ -101,7 +104,7 @@ def main():
 	else:
 		if songs_to_download:
 			logger.info("\nDownloading {0} song(s) from Google Music\n".format(len(songs_to_download)))
-			mmw.download(songs_to_download, cli['output'])
+			mmw.download(songs_to_download, template=cli['output'])
 		else:
 			logger.info("\nNo songs to download")
 

@@ -56,14 +56,18 @@ def main():
 		logger.setLevel(logging.INFO)
 
 	mcw = MobileClientWrapper(enable_logging=cli['log'])
-	mcw.login(cli['user'], cli['pass'], cli['android-id'])
+	mcw.login(username=cli['user'], password=cli['pass'], android_id=cli['android-id'])
+
 	if not mcw.is_authenticated:
 		sys.exit()
 
 	include_filters = [tuple(filt.split(':', 1)) for filt in cli['include-filter']]
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
-	songs_to_delete, _ = mcw.get_google_songs(include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'])
+	songs_to_delete, _ = mcw.get_google_songs(
+		include_filters=include_filters, exclude_filters=exclude_filters,
+		all_includes=cli['all-includes'], all_excludes=cli['all-excludes']
+	)
 
 	if cli['dry-run']:
 		logger.info("Found {0} songs to delete".format(len(songs_to_delete)))

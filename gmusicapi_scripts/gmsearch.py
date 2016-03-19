@@ -54,7 +54,8 @@ def main():
 		logger.setLevel(logging.INFO)
 
 	mcw = MobileClientWrapper(enable_logging=cli['log'])
-	mcw.login(cli['user'], cli['pass'], cli['android-id'])
+	mcw.login(username=cli['user'], password=cli['pass'], android_id=cli['android-id'])
+
 	if not mcw.is_authenticated:
 		sys.exit()
 
@@ -62,7 +63,11 @@ def main():
 	exclude_filters = [tuple(filt.split(':', 1)) for filt in cli['exclude-filter']]
 
 	logger.info("Scanning for songs...\n")
-	search_results, _ = mcw.get_google_songs(include_filters, exclude_filters, cli['all-includes'], cli['all-excludes'])
+	search_results, _ = mcw.get_google_songs(
+		include_filters=include_filters, exclude_filters=exclude_filters,
+		all_includes=cli['all-includes'], all_excludes=cli['all-excludes']
+	)
+
 	search_results.sort(key=lambda song: (song.get('artist'), song.get('album'), song.get('trackNumber')))
 
 	if search_results:
