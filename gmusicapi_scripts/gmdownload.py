@@ -85,9 +85,9 @@ def main():
 			logger.info("\nSongs to download:\n")
 
 			for song in songs_to_download:
-				title = song.get('title', "<empty>")
-				artist = song.get('artist', "<empty>")
-				album = song.get('album', "<empty>")
+				title = song.get('title', "<title>")
+				artist = song.get('artist', "<artist>")
+				album = song.get('album', "<album>")
 				song_id = song['id']
 
 				logger.log(QUIET, "{0} -- {1} -- {2} ({3})".format(title, artist, album, song_id))
