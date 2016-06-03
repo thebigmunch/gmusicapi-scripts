@@ -3,6 +3,16 @@
 Notable changes for the [gmusicapi-scripts](https://github.com/thebigmunch/gmusicapi-scripts) project. This project uses [Semantic Versioning](http://semver.org/) principles.
 
 
+## [0.4.0](https://github.com/thebigmunch/gmusicapi-scripts/releases/tag/0.4.0) (2016-06-03)
+
+[Commits](https://github.com/thebigmunch/gmusicapi-scripts/compare/0.3.0...0.4.0)
+
+### Changed
+
+* Update dependency versions.
+* Exit scripts on authentication failures.
+
+
 ## [0.3.0](https://github.com/thebigmunch/gmusicapi-scripts/releases/tag/0.3.0) (2016-02-29)
 
 [Commits](https://github.com/thebigmunch/gmusicapi-scripts/compare/0.2.1...0.3.0)
