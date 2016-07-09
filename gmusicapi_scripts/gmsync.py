@@ -74,23 +74,14 @@ logger.addHandler(sh)
 def template_to_base_path(template, google_songs):
 	"""Get base output path for a list of songs for download."""
 
-	song_paths = []
-	patterns = {
-		'%artist%': 'artist', '%title%': 'title', '%track%': 'track_number',
-		'%track2%': 'track_number', '%album%': 'album', '%date%': 'date',
-		'%genre%': 'genre', '%albumartist%': 'album_artist', '%disc%': 'disc_number'
-	}
-
-	if template == os.getcwd():
-		local_path = [template]
+	if template == os.getcwd() or template == '%suggested%':
+		base_path = os.getcwd()
 	else:
-		for song in google_songs:
-			song_paths.append(template_to_filepath(template, song, template_patterns=patterns))
+		template = os.path.abspath(template)
+		song_paths = [template_to_filepath(template, song) for song in google_songs]
+		base_path = os.path.dirname(os.path.commonprefix(song_paths))
 
-		common_base_path = os.path.commonprefix(song_paths)
-		local_path = [common_base_path]
-
-	return local_path
+	return base_path
 
 
 def main():
@@ -129,7 +120,7 @@ def main():
 
 		logger.info("")
 
-		cli['input'] = template_to_base_path(cli['output'], matched_google_songs)
+		cli['input'] = [template_to_base_path(cli['output'], matched_google_songs)]
 
 		matched_local_songs, __, __ = mmw.get_local_songs(cli['input'], exclude_patterns=cli['exclude'])
 
