@@ -3,6 +3,15 @@
 Notable changes for the [gmusicapi-scripts](https://github.com/thebigmunch/gmusicapi-scripts) project. This project uses [Semantic Versioning](http://semver.org/) principles.
 
 
+## [0.5.0](https://github.com/thebigmunch/gmusicapi-scripts/releases/tag/0.5.0) (2016-07-18)
+
+[Commits](https://github.com/thebigmunch/gmusicapi-scripts/compare/0.4.0...0.5.0)
+
+### Fixed
+
+* Update template_to_base_path for gmusicapi-wrapper changes. Fixes issue with using incorrect tag field.
+
+
 ## [0.4.0](https://github.com/thebigmunch/gmusicapi-scripts/releases/tag/0.4.0) (2016-06-03)
 
 [Commits](https://github.com/thebigmunch/gmusicapi-scripts/compare/0.3.0...0.4.0)
