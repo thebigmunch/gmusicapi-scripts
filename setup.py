@@ -7,7 +7,7 @@ import sys
 from setuptools import find_packages, setup
 
 if sys.version_info[:3] < (3, 4):
-	sys.exit("gmusicapi-wrapper does not support this version of Python.")
+	sys.exit("gmusicapi-scripts does not support this version of Python.")
 
 # From http://stackoverflow.com/a/7071358/1231454
 version_file = "gmusicapi_scripts/__init__.py"
@@ -17,9 +17,9 @@ version_file_contents = open(version_file).read()
 match = re.search(version_re, version_file_contents, re.M)
 
 if match:
-    version = match.group(1)
+	version = match.group(1)
 else:
-    raise RuntimeError("Could not find version in '{}'".format(version_file))
+	raise RuntimeError("Could not find version in '{}'".format(version_file))
 
 setup(
 	name='gmusicapi_scripts',
